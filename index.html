@@ -33,7 +33,7 @@
             
             --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
             --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25);
-            --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
+            --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 6px 12px rgba(0, 0, 0, 0.2);
         }
 
         html, body {
@@ -60,7 +60,7 @@
         #main-scrollable-area {
             flex: 1;
             overflow-y: auto;
-            padding: 15px 0 160px; /* Vergrößerter unterer Rand für die untere Steuerleiste */
+            padding: 15px 0 140px; /* Vergrößerter unterer Rand für die untere Steuerleiste - CSÖKKENTVE 160px-ről 140px-re */
             box-sizing: border-box;
         }
 
@@ -355,7 +355,7 @@
             display: flex;
             justify-content: space-between; /* Um die Zentrierung zu ermöglichen, ist space-between passend */
             align-items: center;
-            padding: 10px;
+            padding: 8px; /* CSÖKKENTVE 10px-ről 8px-re */
             background: var(--card-bg);
             border-radius: 8px;
             box-shadow: var(--shadow-soft);
@@ -1169,6 +1169,7 @@
             display: none;
         }
 
+        /* MODIFIED: Centering for input fields */
         #customPromptInput, #searchAuftragInput {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -1176,6 +1177,12 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
             font-size: 2em;
             font-weight: bold;
+            display: block; /* Ensure it behaves as a block element for margin auto */
+            width: 90%; /* Take 90% of the parent's width */
+            margin: 0 auto; /* Center horizontally */
+            padding: 10px; /* Keep padding */
+            border-radius: 8px; /* Keep border-radius */
+            box-sizing: border-box; /* Ensure padding and border are included in the width */
         }
         #customPromptOkBtn i {
             font-size: 1.5em;
@@ -1306,7 +1313,7 @@
         }
         /* NEW: Style for bock numbers in table rows */
         .bock-row-number {
-            font-size: 1.2em; /* 20% larger than default td text (1em) */
+            font-size: 1.2em; /* 10% larger than default td text (1em) */
             font-weight: bold;
             color: var(--primary); /* Optional: make it blue like the header icon */
         }
@@ -1425,7 +1432,7 @@
             <span id="promptCategoryNumber" class="modal-category-number">
                 <div class="icon-and-text-group">
                     <!-- Traverse Icon -->
-                    <img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">
+                    <img id="promptTraverseIcon" src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">
                     <!-- Traverse Label -->
                     <div class="traverse-label-in-prompt">Traverse</div>
                 </div>
@@ -1433,7 +1440,7 @@
             </span>
             <h2 id="customPromptTitle">Manuelle Eingabe</h2>
             <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
-            <input type="text" id="customPromptInput" placeholder="Auftrag eingeben" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+            <input type="text" id="customPromptInput" placeholder="Auftrag eingeben">
             <div style="display: flex; justify-content: center; gap: 10px; width: 100%;">
                 <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;" title="Abbrechen"><i class="fas fa-times"></i></button>
                 <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;" title="OK"><i class="fas fa-check"></i></button>
@@ -1454,7 +1461,7 @@
     <div id="searchModal" class="modal-overlay">
         <div class="note-modal-content">
             <h2>Suche</h2>
-            <input type="text" id="searchAuftragInput" placeholder="Auftrag eingeben" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+            <input type="text" id="searchAuftragInput" placeholder="Auftrag eingeben">
             <div id="searchResultsContainer"></div>
         </div>
     </div>
@@ -2133,7 +2140,8 @@ const db = (() => {
 
         const isEmpty = entries.length === 0;
         const iconColor = isEmpty ? '%236c757d' : '%230056b3';
-        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
+        // MODIFIED: Dynamische szín a SVG ikonhoz
+        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
 
         // For the bottom control bar, we'll also use the new structure for consistency
         // but keep the currentCategory number as the primary display next to it.
@@ -2515,7 +2523,7 @@ const db = (() => {
         // Calculate mouse position relative to the image
         const rect = modalImage.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+        const mouseY = e.clientY - e.clientY - rect.top;
 
         // Calculate current image center relative to its container
         const imageCenterX = rect.width / 2;
@@ -2768,10 +2776,10 @@ const db = (() => {
             img.crossOrigin = 'Anonymous';
             img.onload = () => resolve(img);
             img.onerror = () => {
-                console.warn(`Fehler beim Bereinigen des Bildes: ${imageDataUrl.substring(0, 50)}...`);
+                console.warn(`Fehler beim Bereinigen des Bildes: ${src.substring(0, 50)}...`); // Changed imageDataUrl to src
                 reject(new Error('Fehler beim Laden des Bildes für die Bereinigung.'));
             };
-            img.src = imageDataUrl;
+            img.src = src; // Changed imageDataUrl to src
         });
     }
 
@@ -3164,11 +3172,13 @@ const db = (() => {
             const okBtn = document.getElementById('customPromptOkBtn');
             const cancelBtn = document.getElementById('customPromptCancelBtn');
             const categoryNumberSpan = document.getElementById('promptCategoryNumber');
+            const promptTraverseIcon = document.getElementById('promptTraverseIcon'); // Hozzáadva az ikon DOM eleme
             
             // Update the category number and icon in the modal
-            // Always set to blue
-            const iconColor = '%230056b3';
-            const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
+            const isEmpty = entries.length === 0; // A kategória ürességének ellenőrzése
+            const iconColor = isEmpty ? '%236c757d' : '%230056b3'; // Dinamikus szín
+            // MODIFIED: Dinamikus szín a SVG ikonhoz
+            const iconSvg = `<img id="promptTraverseIcon" src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
 
             // Clear previous content and add icon, then "Traverse" label, then number
             categoryNumberSpan.innerHTML = `
@@ -3178,7 +3188,7 @@ const db = (() => {
                 </div>
                 <span class="category-number-display-large">${currentCategory}</span>
             `;
-            categoryNumberSpan.style.color = 'var(--primary)'; // Always blue
+            categoryNumberSpan.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)'; // A szöveg színének dinamikus beállítása
 
             customPromptInput.value = '';
             customPromptInput.placeholder = message; // Set the placeholder text
@@ -3313,10 +3323,10 @@ const db = (() => {
     // NEU: Funktion zum Öffnen des Suchmodals
     async function openSearchModal() {
         searchAuftragInput.value = '';
+        searchAuftragInput.focus(); // Focus the input field immediately
         searchResultsContainer.innerHTML = '';
         searchModal.style.display = 'flex';
         document.body.classList.add('modal-open');
-        searchAuftragInput.focus();
         
         showLoading("Alle Einträge zum Suchen werden geladen...");
         try {
