@@ -1324,6 +1324,9 @@
             justify-content: center;
             white-space: nowrap; /* Prevent wrapping for icons and text */
         }
+        .chart-data-cell {
+            font-size: 1.1em; /* 10% larger than default */
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -1467,7 +1470,7 @@
                 <rect x="10" y="70" width="56" height="20" fill="#0056b3"/>
                 <rect x="134" y="70" width="56" height="20" fill="#0056b3"/>
             </svg>
-            <span class="bock-modal-label">Rüststation</span>
+            <span class="bock-modal-label">Hub- & Senkstation</span> <!-- Changed to Hub- & Senkstation -->
             <div id="bockButtonsContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%;">
                 <!-- Buttons 1-8 will be added here by JS -->
             </div>
@@ -2130,7 +2133,7 @@ const db = (() => {
 
         const isEmpty = entries.length === 0;
         const iconColor = isEmpty ? '%236c757d' : '%230056b3';
-        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
+        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
 
         // For the bottom control bar, we'll also use the new structure for consistency
         // but keep the currentCategory number as the primary display next to it.
@@ -2434,7 +2437,7 @@ const db = (() => {
         // Calculate new translation based on mouse movement and zoom level
         // Divide by currentZoom to reduce sensitivity at higher zoom levels
         translateX = initialTranslateX + (e.clientX - dragStartX) / currentZoom;
-        translateY = initialTranslateY + (e.clientY - dragStartY) / currentZoom;
+        translateY = initialTranslateX + (e.clientY - dragStartY) / currentZoom;
         applyImageTransform();
     }
 
@@ -2721,10 +2724,10 @@ const db = (() => {
         const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
         const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
         
-        const result = await showCustomConfirm(`Biztosan törölni szeretné ${dummyEntryForCheckbox ? 'az összes FA/NA bejegyzést' : 'az összes bejegyzést'} ebből a kategóriából?`, 'Megerősítés', dummyEntryForCheckbox);
+        const result = await showCustomConfirm(`Sind Sie sicher, dass Sie ${dummyEntryForCheckbox ? 'alle FA/NA-Einträge' : 'alle Einträge'} dieser Kategorie löschen möchten?`, 'Bestätigung', dummyEntryForCheckbox);
         
         if (result.confirmed) {
-            showLoading("Kategória törlése...");
+            showLoading("Kategorie wird gelöscht...");
             try {
                 if (result.exportPdf) {
                     for (const entry of entries) {
@@ -2765,10 +2768,10 @@ const db = (() => {
             img.crossOrigin = 'Anonymous';
             img.onload = () => resolve(img);
             img.onerror = () => {
-                console.warn(`Fehler beim Bereinigen des Bildes: ${src.substring(0, 50)}...`);
+                console.warn(`Fehler beim Bereinigen des Bildes: ${imageDataUrl.substring(0, 50)}...`);
                 reject(new Error('Fehler beim Laden des Bildes für die Bereinigung.'));
             };
-            img.src = src;
+            img.src = imageDataUrl;
         });
     }
 
@@ -2810,7 +2813,7 @@ const db = (() => {
         if (entry.bockNumber) {
             doc.setFontSize(18);
             // MODIFIED: Change "Bock-Nummer" to "Rüststation"
-            doc.text(`Rüststation: ${entry.bockNumber}`, 10, yPos);  
+            doc.text(`Hub- & Senkstation: ${entry.bockNumber}`, 10, yPos);  <!-- Changed to Hub- & Senkstation -->
             yPos += 15;
         }
 
@@ -2927,7 +2930,7 @@ const db = (() => {
 
             } catch (error) {
                 console.error("Fehler beim Löschen oder Exportieren.", error);
-                showCustomAlert('Beim Lölés vagy exportálás során hiba történt.', 'Hiba');
+                showCustomAlert('Beim Löschen oder Exportieren ist ein Fehler aufgetreten.', 'Fehler');
             } finally {
                 hideLoading();
             }
@@ -2958,11 +2961,11 @@ const db = (() => {
                 await updateCategoryButtonColors();
             }
             noteModal.style.display = 'none';
-            document.body.classList.remove('modal-open');
-        } catch (error) { // Added catch block
+            document.body.classList.remove('modal');
+        } catch (error) {
             console.error("Fehler beim Speichern der Notiz:", error);
             showCustomAlert('Beim Speichern der Notiz ist ein Fehler aufgetreten.', 'Fehler');
-        } finally { // Added finally block
+        } finally {
             hideLoading();
         }
     }
@@ -3025,7 +3028,7 @@ const db = (() => {
                         entry.kepek.push(sanitizedImageDataUrl);
                         await db.updateEntry(entry);
                     } else {
-                        console.warn(`Eintrag mit ID ${id} zum Aktualisieren nem található.`);
+                        console.warn(`Eintrag mit ID ${id} zum Aktualisieren nicht gefunden.`);
                     }
                 }
                 
@@ -3141,7 +3144,7 @@ const db = (() => {
             if (isEmpty) {
                 showBockSelectionModal();
             } else {
-                showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+                showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => {
                     if (manualCode && manualCode.trim() !== '') {
                         addNewEntry(manualCode.trim(), null, 'manual');
                     }
@@ -3155,7 +3158,7 @@ const db = (() => {
     }
 
     // Zeigt ein benutzerdefiniertes Prompt-Modal an
-    function showCustomPrompt(message, title = 'Bevitel') {
+    function showCustomPrompt(message, title = 'Eingabe') {
         return new Promise(async resolve => {
             const promptModal = document.getElementById('customPromptModal');
             const okBtn = document.getElementById('customPromptOkBtn');
@@ -3291,7 +3294,7 @@ const db = (() => {
     // QR-Code-Modal anzeigen
     function showQrCodeModal(code) {
         if (typeof QRCode === 'undefined') {
-            showCustomAlert('QR-Code-Generierungsbibliothek nem található.', 'Hiba');
+            showCustomAlert('QR-Code-Generierungsbibliothek nicht gefunden.', 'Fehler');
             return;
         }
         qrCodeContainer.innerHTML = '';
@@ -3315,12 +3318,12 @@ const db = (() => {
         document.body.classList.add('modal-open');
         searchAuftragInput.focus();
         
-        showLoading("Minden bejegyzés betöltése kereséshez...");
+        showLoading("Alle Einträge zum Suchen werden geladen...");
         try {
             allEntriesData = await db.getAllEntries();
         } catch (error) {
-            console.error("Hiba az összes bejegyzés betöltésekor a kereséshez:", error);
-            showCustomAlert('Hiba történt az adatok betöltésekor a kereséshez.', 'Hiba');
+            console.error("Fehler beim Laden aller Einträge zum Suchen:", error);
+            showCustomAlert('Fehler beim Laden der Daten zur Suche.', 'Fehler');
         } finally {
             hideLoading();
         }
@@ -3345,7 +3348,7 @@ const db = (() => {
         searchResultsContainer.innerHTML = '';
 
         if (traverseNumbers.length === 0) {
-            searchResultsContainer.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">Nincs találat.</p>';
+            searchResultsContainer.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">Keine Treffer.</p>';
             return;
         }
 
@@ -3358,7 +3361,7 @@ const db = (() => {
                 if (categoryButton) {
                     selectCategory(number, categoryButton);
                 } else {
-                    showCustomAlert(`A ${number} traversa kategória gomb nem található. Kérjük, ellenőrizze, hogy a kategória létezik-e (1-28).`, 'Hiba');
+                    showCustomAlert(`Der Traversenkategorie-Button ${number} wurde nicht gefunden. Bitte überprüfen Sie, ob die Kategorie existiert (1-28).`, 'Fehler');
                 }
                 closeModal(searchModal);
             });
@@ -3388,27 +3391,27 @@ const db = (() => {
     // NEW: Function to handle Bock number selection
     async function handleBockSelection(selectedBockNumber) {
         if (currentCategoryForBockSelection === null || typeof currentCategoryForBockSelection !== 'number' || isNaN(currentCategoryForBockSelection)) {
-            showCustomAlert('Hiba: A Bock-szám mentéséhez szükséges kategória nem azonosítható. Kérjük, először válasszon ki egy traversa gombot, vagy próbálja újra.', 'Hiba');
+            showCustomAlert('Fehler: Die zum Speichern der Hub- & Senkstation-Nummer erforderliche Kategorie konnte nicht identifiziert werden. Bitte wählen Sie zuerst eine Traversen-Schaltfläche aus oder versuchen Sie es erneut.', 'Fehler'); <!-- Changed to Hub- & Senkstation -->
             hideLoading();
             return;
         }
 
-        showLoading("Bock-szám mentése...");
+        showLoading("Hub- & Senkstation-Nummer wird gespeichert..."); <!-- Changed to Hub- & Senkstation -->
         try {
             await db.saveCategoryMetadata({ categoryNumber: currentCategoryForBockSelection, bockNumber: selectedBockNumber });
             await updateBockHeader(); // NEW: Update Bock header after selection
 
             closeModal(bockSelectionModal);
 
-            showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+            showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => { <!-- Changed to Auftrag eingeben -->
                 if (manualCode && manualCode.trim() !== '') {
                     addNewEntry(manualCode.trim(), null, 'manual');
                 }
             });
 
         } catch (error) {
-            console.error("Hiba a Bock-szám mentésekor vagy a további feldolgozás során:", error);
-            showCustomAlert('Hiba történt a Bock-szám mentésekor vagy a folyamat során: ' + error.message, 'Hiba');
+            console.error("Fehler beim Speichern der Hub- & Senkstation-Nummer oder bei der weiteren Verarbeitung:", error); <!-- Changed to Hub- & Senkstation -->
+            showCustomAlert('Fehler beim Speichern der Hub- & Senkstation-Nummer oder während des Prozesses: ' + error.message, 'Fehler'); <!-- Changed to Hub- & Senkstation -->
         } finally {
             hideLoading();
         }
@@ -3580,7 +3583,7 @@ const db = (() => {
             if (currentCategory === focusedCategoryNum) {
                 if (hasData) {
                     // Második Enter egy adatot tartalmazó kategórián: Szkennelő prompt megnyitása
-                    showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+                    showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => {
                         if (manualCode && manualCode.trim() !== '') {
                             addNewEntry(manualCode.trim(), null, 'manual');
                         }
@@ -3663,10 +3666,10 @@ const db = (() => {
         const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
         const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
         
-        const result = await showCustomConfirm(`Biztosan törölni szeretné ${dummyEntryForCheckbox ? 'az összes FA/NA bejegyzést' : 'az összes bejegyzést'} ebből a kategóriából?`, 'Megerősítés', dummyEntryForCheckbox);
+        const result = await showCustomConfirm(`Sind Sie sicher, dass Sie ${dummyEntryForCheckbox ? 'alle FA/NA-Einträge' : 'alle Einträge'} dieser Kategorie löschen möchten?`, 'Bestätigung', dummyEntryForCheckbox);
         
         if (result.confirmed) {
-            showLoading("Kategória törlése...");
+            showLoading("Kategorie wird gelöscht...");
             try {
                 if (result.exportPdf) {
                     for (const entry of entries) {
