@@ -1,0 +1,3797 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Traversendaten</title>
+    <!-- Favicon geändert zu blauem Traversen-Icon -->
+    <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E'>
+    <!-- Font Awesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- QR Code Library -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        /* Von Otto Lehmann inspiriertes Design - Maximaler 3D-Effekt */
+        :root {
+            --bg: #f5f5f5; /* Hellgrauer Hintergrund */
+            --text: #333333; /* Dunkelgrauer Text */
+            --muted: #6c757d; /* Mittelgrau für gedämpfte Elemente */
+            --primary: #0056b3; /* Otto Lehmanns Blau */
+            --primary-dark: #004085; /* Dunkleres Blau für Hover */
+            --light-primary: #70A4D5; /* Hellblau für die Kategorien 17-28 */
+            --light-primary-dark: #5A8FC2; /* Dunkleres Hellblau für Hover */
+            --medium-primary: #2C6BB0; /* Neu: mittleres Blau, etwas dunkler */
+            --medium-primary-dark: #23558A; /* Neu: dunkleres mittleres Blau für Hover */
+            --very-light-blue: #E0F2F7; /* NEU: Sehr hellblau für das Raster der Kategorien 1-16 */
+            --accent: #28a745; /* Professionelles Grün für Akzent/Erfolg */
+            --success: #28a745; /* Grün für Erfolgsmeldungen */
+            --danger: #dc3545; /* Rot für Gefahr/Löschen */
+            --warning: #ffc107; /* Gelb für Warnungen */
+            --border-color: #e0e0e0; /* Hellgrauer Rahmen */
+            --card-bg: #ffffff; /* Weiße Kartenhintergründe */
+            --row-alt-bg: #f8f8f8; /* Sehr hellgrau für abwechselnde Tabellenzeilen */
+            
+            --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25);
+            --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px; /* Seitlicher Rand hinzugefügt */
+            box-sizing: border-box;
+        }
+        body.modal-open {
+            overflow: hidden; /* Verhindert das Scrollen, wenn Modal geöffnet ist */
+        }
+
+        #main-scrollable-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0 160px; /* Vergrößerter unterer Rand für die untere Steuerleiste */
+            box-sizing: border-box;
+        }
+
+        .grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--text);
+        }
+        #categoryGrid2 {
+            background: #70A4D5; /* Rasterhintergrund beibehalten, aber Schaltflächenfarbe überschreibt jetzt */
+        }
+        /* NEU: Sehr hellblau für das Raster der Kategorien 1-16 */
+        #categoryGrid1 {
+            grid-template-columns: repeat(8, 1fr);
+            background: var(--very-light-blue);
+        }
+        #categoryGrid2 {
+            grid-template-columns: repeat(12, 1fr);
+        }
+
+        .grid button {
+            position: relative;
+            /* UPDATED: Reverted padding to original compact values */
+            padding: 0.868em 0.434em; /* Scaled from 20px 10px based on button's font-size */
+            /* UPDATED: Reduced min-height to be more compact */
+            min-height: 2.8em; /* Adjusted to be more compact, but still allow for content */
+            font-size: 1.44em; /* Base font size for the button content */
+            border-radius: 6px;
+            border: 1px solid var(--text);
+            cursor: pointer;
+            background: var(--primary); /* Standard Dunkelblau */
+            color: #ffffff;
+            user-select: none;
+            transition: all 0.1s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-shadow: none;
+            display: flex; /* Make it a flex container */
+            flex-direction: column; /* Stack content vertically */
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+        }
+        /* GEÄNDERT: Mittleres Blau für Kategorietasten 17-28, wenn Daten vorhanden */
+        #categoryGrid2 button:not(.empty-category) {
+            background: var(--medium-primary);
+        }
+        /* GEÄNDERT: Dunklerer mittlerer Blau-Hover-Effekt für Kategorietasten 17-28 */
+        #categoryGrid2 button:not(.empty-category):hover {
+            background: var(--medium-primary-dark);
+            border-color: var(--medium-primary-dark); /* Aktualisierte Rahmenfarbe für Hover */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .grid button .time-icon {
+            position: absolute;
+            /* UPDATED: Pushed closer to the corner */
+            bottom: 0.05em; 
+            right: 0.05em; 
+            /* UPDATED: Slightly reduced font-size */
+            font-size: 0.7em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* 3D-Effekt */
+        }
+        .grid button .day-letter {
+            position: absolute;
+            /* UPDATED: Pushed closer to the corner */
+            bottom: 0.05em; 
+            left: 0.05em; 
+            /* UPDATED: Slightly reduced font-size */
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .grid button.empty-category {
+            background: var(--card-bg);
+            color: var(--text);
+            border-color: var(--text);
+            box-shadow: none;
+        }
+        .grid button:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+        .grid button:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+        .grid button.empty-category:hover {
+            background: var(--row-alt-bg);
+            border-color: var(--muted);
+            box-shadow: none;
+        }
+        
+        @keyframes pulse-primary-dark { /* Umbenamed zur Klarheit */
+            0% { box-shadow: var(--shadow-medium), 0 0 0 0 var(--primary-dark); }
+            70% { box-shadow: var(--shadow-medium), 0 0 0 10px rgba(0, 64, 133, 0); }
+            100% { box-shadow: var(--shadow-medium), 0 0 0 0 var(--primary-dark); }
+        }
+
+        @keyframes pulse-light-primary {
+            0% { box-shadow: var(--shadow-medium), 0 0 0 0 var(--light-primary); }
+            70% { box-shadow: var(--shadow-medium), 0 0 0 10px rgba(112, 164, 213, 0); }
+            100% { box-shadow: var(--shadow-medium), 0 0 0 0 var(--light-primary); }
+        }
+
+        /* NEUE ANIMATION: Mittleres blaues Pulsieren */
+        @keyframes pulse-medium-primary {
+            0% { box-shadow: var(--shadow-medium), 0 0 0 0 rgba(44, 107, 176, 0); }
+            70% { box-shadow: var(--shadow-medium), 0 0 0 10px rgba(44, 107, 176, 0.4); }
+            100% { box-shadow: var(--shadow-medium), 0 0 0 0 rgba(44, 107, 176, 0); }
+        }
+
+        @keyframes pulse-grey-less-intense { /* Neue Animation für weniger intensive graue Pulsation */
+            0% { box-shadow: var(--shadow-medium), 0 0 0 0 rgba(108, 117, 125, 0.7); }
+            70% { box-shadow: var(--shadow-medium), 0 0 0 10px rgba(108, 117, 125, 0); }
+            100% { box-shadow: var(--shadow-medium), 0 0 0 0 rgba(108, 117, 125, 0); }
+        }
+
+        .grid button.active {
+            /* Schriftart wird von aktiven Klassen verwaltet */
+            /* Standardmäßiger aktiver Rahmen/Schatten, spezifischere Regeln überschreiben bei Bedarf */
+            border: 4px solid var(--muted); /* Standardmäßiger grauer Rahmen für aktiv */
+            box-shadow: var(--shadow-medium); /* Standardmäßiger mittlerer Schatten für aktiv */
+            animation-duration: 3s; /* Langsamere Animation für alle aktiven Schaltflächen */
+            animation-iteration-count: infinite; /* Unbegrenzte Animation abspielen */
+        }
+        .grid button.active:not(.empty-category) {
+            font-weight: bold; /* Fett für die weiße Zahl */
+            color: #ffffff; /* Textfarbe weiß */
+            border: 4px solid #ffffff; /* Weißer Rahmen für aktive, nicht leere Kategorie */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Dunkler, prominenter Schatten */
+            animation-name: pulse-primary-dark; /* Standardmäßiges dunkelblaues Pulsieren */
+        }
+        /* GEÄNDERT: Mittleres Blau für Kategorietasten 17-28, wenn Daten vorhanden */
+        #categoryGrid2 button.active:not(.empty-category) {
+            background: var(--medium-primary);
+            animation-name: pulse-medium-primary;
+        }
+
+        .grid button.active.empty-category {
+            background: var(--card-bg);
+            color: var(--muted); /* Grauer Text */
+            animation-name: pulse-grey-less-intense; /* Wendet die neue, weniger intensive graue Pulsation an */
+            border: 4px solid var(--muted); /* Verbesserter Rahmen von 44px auf 4px */
+            font-weight: bold; /* Setzt die Zahl auf fett */
+        }
+        .grid button.active:not(.empty-category) .day-letter {
+            font-weight: bold; /* Setzt den Tagesbuchstaben für aktive, nicht leere Kategorie auf fett */
+        }
+
+        /* NEUE REGEL: Icon in der oberen linken Ecke der Schaltfläche (L-Buchstabe) */
+        .grid button .fa-na-icon { /* Klasse für präzisere Beschreibung umbenannt */
+            position: absolute;
+            /* UPDATED: Pushed closer to the corner */
+            top: 0.05em; 
+            left: 0.05em; 
+            /* UPDATED: Slightly reduced width/height */
+            width: 1em; /* Größe einstellen */
+            height: 1em; /* Größe einstellen */
+            z-index: 10; /* Damit es über anderen Elementen liegt */
+        }
+        /* NEU: Icon in der oberen linken Ecke der Schaltfläche (bei Nicht-FA/NA-Daten) */
+        .grid button .non-fa-na-icon {
+            position: absolute;
+            /* UPDATED: Pushed closer to the corner */
+            top: 0.05em; 
+            left: 0.05em; 
+            /* UPDATED: Slightly reduced width/height */
+            width: 1em; /* Größe einstellen */
+            height: 1em; /* Größe einstellen */
+            z-index: 10; /* Damit es über anderen Elementen liegt */
+        }
+
+        /* NEW: Bock number display on category buttons */
+        .grid button .bock-number-display {
+            position: absolute;
+            /* UPDATED: Pushed closer to the corner */
+            top: 0.05em; 
+            right: 0.05em; 
+            background-color: var(--primary); /* Blue background */
+            color: white; /* White text */
+            /* UPDATED: Slightly reduced font-size */
+            font-size: 0.5em; /* Smaller font size */
+            font-weight: bold;
+            border-radius: 50%; /* Make it a circle */
+            /* UPDATED: Adjusted width/height relative to its new font-size */
+            width: 1.8em; /* Adjusted to be relative to its own font-size */
+            height: 1.8em; /* Adjusted to be relative to its own font-size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 15; /* Higher than other icons */
+            /* Default no border and no animation */
+            border: 1px solid transparent;
+            animation: none;
+        }
+        .grid button.empty-category .bock-number-display {
+            background-color: var(--muted); /* Muted color for empty categories */
+        }
+
+        /* NEW: Pulsing red border for bock number display when has-note-blinking */
+        @keyframes pulse-red-border {
+            0% { border-color: red; box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+            70% { border-color: red; box-shadow: 0 0 0 8px rgba(255, 0, 0, 0); }
+            100% { border-color: red; box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+        }
+
+        .has-note-blinking .bock-number-display {
+            border: 1px solid red; /* Apply red border when pulsing */
+            animation: pulse-red-border 1.5s infinite alternate; /* Apply pulsing animation */
+        }
+
+
+        /* UPDATED: Replaced old SVG with new one for header icon */
+        .header-traverse-icon {
+            width: 1.5em; /* Die Breite des Icons - gleich der Höhe der Zahl */
+            height: 1.5em; /* Die Höhe des Icons - gleich der Höhe der Zahl */
+            vertical-align: middle; /* Vertikale Ausrichtung zum Text */
+            /* margin-right: 5px; */ /* Removed margin to center the icon */
+            display: inline-block; /* Wichtig, dass es inline-block ist wegen der vertikalen Ausrichtung */
+        }
+
+        /* UPDATED: Replaced old SVG with new one for category label icon */
+        .category-label-icon {
+            /* Die .controls .category-display-label font-size-a 2.2em, ehhez igazítjuk */
+            width: 1em; /* Die Breite des Icons an die Höhe der Zahl angepasst */
+            height: 1em; /* Die Höhe des Icons an die Höhe der Zahl angepasst */
+            vertical-align: middle; /* Vertikale Ausrichtung zum Text */
+            margin-right: 10px; /* Abstand zur Zahl */
+            display: inline-block; /* Wichtig, dass es inline-block ist wegen der vertikalen Ausrichtung */
+        }
+
+        /* MODIFIED: Removed font-size increase for .has-note-blinking .category-number-display */
+        /* @keyframes blink-red-white-text removed, replaced by blink-white-red-text */
+        /* The previous blink-red-white-text animation is now replaced by blink-white-red-text */
+        /* The actual pulsing for the traverse number's border and text color is handled below */
+
+        /* NEW: Animation for text color (white to red) */
+        @keyframes blink-white-red-text {
+            from { color: #ffffff; } /* Start white */
+            to { color: var(--danger); } /* End red */
+        }
+
+        /* NEW: Animation for pulsing white-red border */
+        @keyframes pulse-white-red-border {
+            0% { border-color: #ffffff; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { border-color: var(--danger); box-shadow: 0 0 0 8px rgba(255, 0, 0, 0); }
+            100% { border-color: #ffffff; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+        }
+
+        /* MODIFIED: Styles for traverse number when it has a note (blinking white-red) */
+        .has-note-blinking .category-number-display {
+            font-weight: bold; /* Ensure the number is bold */
+            
+            /* Add border to create the "frame" effect */
+            border: 1px solid #ffffff; /* Initial white border */
+            padding: 0.0868em 0.217em; /* Scaled from 2px 5px */
+            border-radius: 4px; /* Slightly rounded corners for the frame */
+            display: inline-block; /* Ensure padding and border apply correctly */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+
+            /* Apply both animations */
+            animation-name: blink-white-red-text, pulse-white-red-border;
+            animation-duration: 1.5s, 1.5s;
+            animation-iteration-count: infinite, infinite;
+            animation-direction: alternate, alternate;
+            animation-timing-function: ease, ease;
+        }
+
+
+        #mainControls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0; /* Geändert von width: 100% auf right: 0 */
+            z-index: 1000;
+            /* Bleibt auskommentiert, JS steuert die Sichtbarkeit */
+            box-sizing: border-box;
+            padding: 0 15px; /* Horizontaler Abstand hinzugefügt, um sich dem Body anzupassen */
+            background: transparent; /* Transparent geändert, um die Stilgebung des inneren Divs zu ermöglichen */
+            border-top: none; /* Für den Container entfernt */
+            box-shadow: none; /* Für den Container entfernt */
+            flex-shrink: 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between; /* Um die Zentrierung zu ermöglichen, ist space-between passend */
+            align-items: center;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            width: 100%;
+            margin: 10px 0;
+            flex-wrap: nowrap;
+        }
+        
+        .centered-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1; /* Damit es den verfügbár Platz ausfüllt, wodurch der Inhalt zentriert wird */
+            gap: 15px;
+        }
+
+        .controls .category-display-label {
+            font-weight: bold;
+            font-size: 2.2em; /* This is the base font size for the label */
+            text-align: center;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            height: auto;
+            flex-shrink: 1;
+            flex-basis: auto;
+            margin: 0 10px;
+            line-height: 1;
+            display: flex; /* Ensure it's a flex container for inner elements */
+            align-items: center; /* Align items vertically */
+            justify-content: center; /* Center content horizontally */
+        }
+
+        /* NEW: Style for the traverse number within the category-display-label */
+        .controls .category-display-label .traverse-number-in-controls {
+            font-size: 1.5em; /* Make the number larger relative to its parent (2.2em * 1.5 = 3.3em) */
+            font-weight: bold;
+            /* REMOVED: color: var(--primary); */ /* This will now inherit from the parent based on data presence */
+            margin-left: 0.2em; /* Add a small margin to separate from the icon/text group */
+        }
+
+
+        #categoryLabelRight {
+            display: none;
+        }
+
+        .controls .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls button {
+            font-size: 1.1em;
+            padding: 14px 22px;
+            border-radius: 6px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-shadow: none;
+        }
+
+        .controls button.empty-category-control {
+            background: var(--muted) !important;
+            color: var(--text) !important;
+            box-shadow: none !important;
+        }
+
+        .controls button:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+        .controls button:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+        .controls button.empty-category-control:hover {
+            background: var(--row-alt-bg);
+            border-color: var(--muted);
+            box-shadow: none;
+        }
+
+        .controls button i {
+            margin: 0 4px;
+            font-size: 1.8em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        #manualEntryBtn {
+            padding: 18px 44px;
+            font-size: 1.5em;
+        }
+
+        #clearCategoryBtn {
+            background: var(--danger);
+            padding: 14px 22px;
+            font-size: 1.1em;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+        #clearCategoryBtn:hover {
+            background: #c82333;
+            box-shadow: var(--shadow-medium);
+        }
+        #clearCategoryBtn:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+
+        /* NEU: Suchtaste Styles */
+        #searchBtn {
+            padding: 14px 22px; /* Gleiche Polsterung wie bei anderen Tasten */
+            font-size: 1.1em;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-shadow: none;
+        }
+
+        #searchBtn:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+
+        #searchBtn:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+
+
+        /* NEW: Chart button container */
+        .chart-button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px; /* Some padding around them */
+            flex-shrink: 0; /* Prevent shrinking */
+            margin-right: auto; /* This will push it to the left edge */
+        }
+
+        #chartBtn {
+            font-size: 1.8em;
+            padding: 14px 18px;
+            border-radius: 6px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        #chartBtn:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+
+        #chartBtn:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+
+
+        #listSection {
+            margin-top: 30px;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            table-layout: fixed;
+        }
+        th, td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 12px;
+            text-align: center;
+            vertical-align: middle;
+            color: var(--text);
+            /* REMOVED: text-overflow: ellipsis; from td */
+            white-space: normal;
+            word-wrap: break-word;
+            /* ADDED: overflow hidden to ensure content stays within cell */
+            overflow: hidden;
+        }
+        th {
+            background: #f0f0f0;
+            font-weight: 700;
+            /* ÄNDERUNG: Überschrift Textfarbe auf blau */
+            color: var(--muted); /* Changed to muted by default */
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: none;
+        }
+        /* NEW: Dynamic color for table headers based on data presence */
+        table.has-data-selected th {
+            color: var(--primary); /* Blue when data is present */
+        }
+
+        th:first-child { border-top-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; }
+        tr:last-child td { border-bottom: none; }
+
+        #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
+
+        .auftrag-colored {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .auftrag-manual-bold {
+            color: var(--text);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        /* NEW: Style for the clickable auftrag text */
+        .auftrag-clickable {
+            cursor: pointer;
+            display: block; /* Changed from inline-block to block */
+            width: 100%; /* Ensure it takes full width of its parent td */
+            box-sizing: border-box; /* Include padding in width calculation */
+            padding: 5px; /* Adds a bit of clickable area around the text */
+            border-radius: 4px; /* Slight roundness */
+            transition: background-color 0.1s ease, transform 0.1s ease; /* Added transform to transition */
+            word-break: break-all; /* Force breaks even within long words */
+        }
+        .auftrag-clickable:hover {
+            background-color: rgba(0, 0, 0, 0.05); /* Subtle hover effect */
+            transform: scale(1.03); /* Slightly scale up on hover */
+        }
+        .auftrag-clickable:active {
+            transform: scale(0.97); /* Slightly scale down on click */
+        }
+
+
+        /* NEW: Style for the traverse number in the table rows */
+        .traverse-row-number {
+            color: var(--primary); /* Blue color */
+            font-weight: bold; /* Bold style */
+            font-size: 1.5em; /* Reverted to 1.5em */
+            /* margin-left: 5px; */ /* Removed margin as it's now the only content */
+        }
+
+        button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+        .deleteBtn {
+            background: #f8d7da;
+            color: var(--danger);
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 8px 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin: 0 auto;
+            box-shadow: none;
+        }
+        .deleteBtn:hover {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: var(--shadow-soft);
+        }
+        .deleteBtn:active {
+            transform: scale(0.95);
+            box-shadow: var(--shadow-active);
+        }
+
+
+        .noteToggleBtn {
+            background: none;
+            border: 1px solid transparent;
+            cursor: pointer;
+            color: var(--muted);
+            line-height: 1;
+            transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            display: inline-block;
+            margin: 0 auto;
+            border-radius: 6px;
+            padding: 8px 8px;
+            font-size: 1.5em;
+        }
+        .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
+
+        .noteToggleBtn.note-filled {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+            box-shadow: var(--shadow-soft);
+            animation: blink-red-white 1.5s infinite alternate;
+        }
+        .noteToggleBtn.note-filled:hover {
+            background: #c82333;
+            border-color: #c82333;
+            color: #fff;
+            box-shadow: var(--shadow-medium);
+            transform: scale(1.15);
+            animation: none;
+        }
+
+        @keyframes blink-red-white {
+            from { background-color: var(--danger); color: #fff; }
+            to { background-color: #ffffff; color: var(--danger); }
+        }
+
+        td.photo-cell {
+            padding: 10px;
+        }
+        .photoRow {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        .photoRow:last-child {
+            margin-bottom: 0;
+        }
+        .photoRow img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            object-fit: cover;
+            background: var(--card-bg);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .upload-checkbox {
+            margin-right: 5px;
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        td .uploadPhotoBtn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            width: auto;
+        }
+
+        .master-upload-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .master-upload-container input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .master-upload-container .fas.fa-folder {
+            font-size: 1.5em;
+            color: var(--muted);
+            transition: color 0.2s ease-in-out, filter 0 2s ease-in-out, text-shadow 0.2s ease-in-out;
+        }
+        .master-upload-container.has-data .fas.fa-folder {
+            color: var(--primary);
+        }
+        .master-upload-container:hover .fas.fa-folder {
+            color: var(--primary-dark);
+        }
+        .master-upload-container.has-data:hover .fas.fa-folder {
+            color: var(--primary-dark);
+        }
+        .master-upload-container input[type="checkbox"]:checked + .fas.fa-folder {
+            filter: brightness(1.2);
+            text-shadow: 0 0 8px rgba(0, 86, 179, 0.7);
+        }
+
+        .header-delete-btn {
+            background: var(--muted);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: none;
+            cursor: not-allowed;
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-delete-btn i {
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .header-delete-btn.has-data {
+            background: var(--danger);
+            cursor: pointer;
+        }
+
+        .header-delete-btn.has-data:hover {
+            background: #c82333;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .header-delete-btn.has-data:active {
+            transform: scale(0.95);
+            box-shadow: var(--shadow-active);
+        }
+
+        .header-delete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+
+        .addExtraPhotoBtn, .uploadPhotoBtn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 8px;
+            font-size: 1.5em;
+            border-radius: 6px;
+            border: 1px solid var(--primary);
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: none;
+        }
+        .addExtraPhotoBtn:hover, .uploadPhotoBtn:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+        .addExtraPhotoBtn:active, .uploadPhotoBtn:active {
+            transform: scale(0.95);
+            box-shadow: var(--shadow-active);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        .modal-overlay:not([style*="display: flex"]) {
+            display: none;
+        }
+        
+        /* Image Modal Styles */
+        #imageModal {
+            background: rgba(0,0,0,0.8); /* Darker background for image viewer */
+            padding: 0; /* Remove padding for true fullscreen feel */
+            overflow: hidden; /* Prevent scrolling on modal overlay */
+        }
+
+        .image-viewer-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Hide parts of zoomed image that out of bounds */
+        }
+
+        #modalImage {
+            max-width: 100%; /* Ensure initial image fits */
+            max-height: 100%;
+            object-fit: contain; /* Contain the image within its bounds */
+            border-radius: 0; /* Remove rounded corners for immersive viewing */
+            box-shadow: none; /* Remove shadow */
+            background: transparent; /* Remove background */
+            cursor: grab; /* Cursor for panning */
+            transition: transform 0.1s ease-out; /* Smooth transitions for zoom/pan/rotate */
+            /* Transform properties will be set by JS */
+            transform-origin: center center; /* Zoom/rotate from center */
+            touch-action: none; /* Disable default touch actions like pinch-zoom */
+        }
+
+        #modalImage.zoomed {
+            cursor: grabbing; /* Cursor when dragging */
+        }
+
+        .viewer-controls {
+            position: absolute;
+            display: flex;
+            gap: 10px;
+            z-index: 10001;
+            padding: 10px;
+            background: rgba(0,0,0,0.4); /* Semi-transparent background for controls */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .viewer-controls.top-right {
+            top: 20px;
+            right: 20px;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .viewer-controls.bottom-center {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .viewer-controls button {
+            background: rgba(255,255,255,0.2); /* Lighter, semi-transparent buttons */
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Controls will have their own shadow via .viewer-controls */
+            min-width: 40px; /* Ensure a decent tap target */
+            min-height: 40px;
+        }
+
+        .viewer-controls button:hover {
+            background: rgba(255,255,255,0.4);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .viewer-controls button:active {
+            transform: scale(0.95);
+        }
+
+        .viewer-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* Specific button overrides */
+        #closeImageModalBtn {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+        #closeImageModalBtn:hover {
+            background: #c82333;
+            border-color: #c82333;
+        }
+        #deleteImageBtn {
+            background: var(--danger); /* Make delete button red */
+            border-color: var(--danger);
+        }
+        #deleteImageBtn:hover {
+            background: #c82333;
+            border-color: #c82333;
+        }
+
+        /* Fullscreen mode specific styles */
+        #imageModal:fullscreen #modalImage {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: contain; /* Ensure it still fits within the screen */
+        }
+
+        /* Hide native scrollbars when modal is open and handling custom scrolling */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Loading overlay style, ensure it's on top of modals */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10000; /* Ensure it's above other modals */
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #customPromptModal, #noteModal, #searchModal, #bockSelectionModal {
+            padding-top: 0;
+        }
+        #customConfirmModal {
+            justify-content: center;
+            padding-top: 0;
+        }
+        .modal-overlay video {
+            width: 82vw;
+            max-width: 700px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-color);
+        }
+        .modal-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .modal-controls button {
+            font-size: 1.05em;
+            padding: 12px 20px;
+            border-radius: 5px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            backdrop-filter: none;
+            box-shadow: var(--shadow-soft);
+        }
+        .modal-controls button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+        .modal-controls button:active { transform: scale(0.98); }
+
+
+        .note-modal-content {
+            position: relative;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            width: 90vw;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-color);
+        }
+        .note-modal-content h2 {
+            margin: 0 0 10px;
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        .note-modal-content p {
+            color: var(--text);
+        }
+        .note-modal-content textarea {
+            width: 100%;
+            height: 160px;
+            font-size: 1.5em;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--bg);
+            color: var(--text);
+            resize: vertical;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+        .note-modal-content button {
+            font-size: 1.05em;
+            padding: 12px 20px;
+            border-radius: 5px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            align-self: flex-end;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.2s ease;
+        }
+        .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+        .note-modal-content button:active { transform: scale(0.98); }
+
+        /* MODIFIED: Styles for the prompt modal header elements */
+        .modal-category-number {
+            font-size: 6em; /* Base size for the entire group */
+            font-weight: 700;
+            line-height: 1; /* Ensure tight vertical spacing */
+            color: var(--primary);
+            display: flex;
+            flex-direction: row; /* Keep them side-by-side */
+            align-items: center; /* Vertically align the two main blocks */
+            justify-content: center;
+            /* REMOVED: gap: 1em; */ /* Remove explicit gap to make them "rögtön mellettük" */
+        }
+        .modal-category-number .icon-and-text-group {
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center;
+            justify-content: center;
+            gap: 0.1em; /* Small gap between icon and text */
+        }
+        .modal-category-number .category-label-icon {
+            width: 0.9em; /* Relative to .modal-category-number's font-size */
+            height: 0.9em; /* Relative to .modal-category-number's font-size */
+            /* No specific margin-bottom needed here, gap handles it */
+        }
+        .modal-category-number .traverse-label-in-prompt {
+            font-size: 0.25em; /* Relative to .modal-category-number's font-size */
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .modal-category-number .category-number-display-large {
+            /* This will be the main number. Its size should be adjusted to match the combined height of the icon and text group. */
+            font-size: 1.25em; /* Relative to .modal-category-number's font-size */
+            font-weight: 700;
+            color: var(--primary);
+            margin-left: 0.2em; /* Add a small margin to separate from the icon/text group */
+        }
+
+
+        #customAlertModal .note-modal-content,
+        #customConfirmModal .note-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        #customPromptModal .note-modal-content {
+            max-width: 456px;
+            align-items: center;
+            gap: 20px;
+            background-color: white !important;
+        }
+        /* REMOVED: Old traverse-modal-icon and traverse-modal-label styles as they are no longer used */
+        /*
+        #customPromptModal .traverse-modal-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: -10px;
+        }
+        #customPromptModal .traverse-modal-icon {
+            width: 120px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            fill: var(--primary);
+        }
+        */
+
+
+        #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2, #searchModal h2 {
+            display: none;
+        }
+        #customPromptMessage {
+            display: none;
+        }
+
+        #customPromptInput, #searchAuftragInput {
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            color: var(--text);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 2em;
+            font-weight: bold;
+        }
+        #customPromptOkBtn i {
+            font-size: 1.5em;
+        }
+        #customPromptCancelBtn i {
+            font-size: 1.5em;
+        }
+        #customPromptCancelBtn:hover {
+            background: #bbbbbb !important;
+        }
+
+        /* Search Results Container for squares */
+        #searchResultsContainer {
+            width: 100%;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .search-result-square {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            cursor: pointer;
+        }
+
+        .search-result-square:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* NEW: Bock selection modal styles */
+        #bockSelectionModal .note-modal-content {
+            max-width: 456px;
+            align-items: center;
+            gap: 20px;
+            background-color: white !important;
+        }
+        /* NEW: Style for the H-shaped icon in the bock selection modal */
+        #bockSelectionModal .bock-modal-icon {
+            width: 120px; /* Doubled width */
+            height: 60px; /* Adjusted height to maintain 2:1 aspect ratio of the new SVG content */
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            fill: var(--primary); /* Always blue, as requested */
+        }
+        /* NEW: Style for the Rüststation label in the bock selection modal */
+        #bockSelectionModal .bock-modal-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: -10px; /* Adjust margin to bring it closer to the icon */
+        }
+
+        #bockSelectionModal .bock-button {
+            padding: 15px;
+            font-size: 1.8em;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: var(--shadow-soft);
+        }
+        #bockSelectionModal .bock-button:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-medium);
+        }
+        #bockSelectionModal .bock-button:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+        /* NEW: Focus style for bock buttons */
+        #bockSelectionModal .bock-button:focus {
+            outline: none;
+            border: 3px solid var(--primary-dark);
+            box-shadow: 0 0 0 5px rgba(0, 86, 179, 0.5);
+        }
+        #bockCancelBtn {
+            margin-top: 20px;
+            /* NEW: Style for the 'X' button */
+            padding: 10px 15px;
+            font-size: 1.5em;
+            background: #ccc;
+            color: var(--text);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            align-self: flex-end;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.1s ease;
+        }
+        #bockCancelBtn:hover {
+            background: #bbbbbb !important;
+            box-shadow: var(--shadow-medium);
+        }
+        #bockCancelBtn:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-active);
+        }
+
+        /* NEW: Style for the Bock icon in the table header */
+        .bock-header-icon {
+            width: 1.8em; /* Adjusted to be 20% larger than 1.5em */
+            height: 1.8em; /* Adjusted to be 20% larger than 1.5em */
+            vertical-align: middle;
+            /* Removed margin-right: 5px; as the number next to it is gone */
+        }
+        /* NEW: Style for bock numbers in table rows */
+        .bock-row-number {
+            font-size: 1.2em; /* 20% larger than default td text (1em) */
+            font-weight: bold;
+            color: var(--primary); /* Optional: make it blue like the header icon */
+        }
+
+        /* NEW: Chart table header icon styling */
+        .chart-header-icon {
+            width: 2.4em; /* Doubled from 1.2em */
+            height: 2.4em; /* Doubled from 1.2em */
+            vertical-align: middle;
+            margin: 0 0.2em; /* Small margin between icons and text/other icons */
+        }
+        .chart-header-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap; /* Prevent wrapping for icons and text */
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <div id="main-scrollable-area">
+        <div class="grid" id="categoryGrid1"></div>
+        <div class="grid" id="categoryGrid2"></div>
+
+        <div id="listSection">
+            <table>
+                <thead>
+                    <tr>
+                        <th id="traverse-header" width="6%">#</th>
+                        <th width="25%">Auftrag</th> <!-- UPDATED: Increased width for Auftrag -->
+                        <th id="bock-header-cell" width="8%">
+                            <svg class="bock-header-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="10" y="5" width="18" height="30" fill="currentColor"/>
+                                <rect x="72" y="5" width="18" height="30" fill="currentColor"/>
+                                <rect x="10" y="15" width="80" height="10" fill="currentColor"/> <!-- Adjusted y to 15 -->
+                                <rect x="5" y="35" width="28" height="10" fill="currentColor"/>
+                                <rect x="67" y="35" width="28" height="10" fill="currentColor"/>
+                            </svg>
+                        </th> <!-- UPDATED: Reduced width for Bock -->
+                        <th width="12%">Datum</th> <!-- UPDATED: Reduced width for Datum -->
+                        <th width="8%">Notiz</th>
+                        <th width="25%">Bilder</th> <!-- UPDATED: Reduced width for Bilder -->
+                        <th width="8%">
+                            <div class="master-upload-container">
+                                <input type="checkbox" id="selectAllUploadsToggle" title="Alle Bilder-Upload-Checkboxes auswählen/abwählen">
+                                <i class="fas fa-folder" title="Bild hochladen"></i>
+                            </div>
+                        </th>
+                        <th width="8%">
+                            <button class="header-delete-btn" id="headerDeleteBtn" title="Kategorie löschen">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="logBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="mainControls">
+        <div class="controls">
+                <div class="chart-button-container" id="chartButtonContainer">
+                    <button id="chartBtn" title="Diagramm anzeigen"><i class="fas fa-chart-line"></i></button>
+                </div>
+                <div class="centered-controls">
+                    <div id="categoryLabelLeft" class="category-display-label"></div>
+                    <div class="control-buttons">
+                        <button id="manualEntryBtn" title="Manuelle Eingabe"><i class="fas fa-barcode"></i></button>
+                        <button id="clearCategoryBtn" title="Kategorie löschen"><i class="fas fa-trash-alt"></i></button>
+                        <button id="searchBtn" title="Suche"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <!-- UPDATED: Image Modal Structure -->
+    <div id="imageModal" class="modal-overlay" tabindex="-1">
+        <div class="image-viewer-container">
+            <img id="modalImage" src="" alt="Bild vergrößert" />
+            <div class="viewer-controls top-right">
+                <button id="closeImageModalBtn" title="Schließen"><i class="fas fa-times"></i></button>
+                <button id="deleteImageBtn" title="Bild löschen"><i class="fas fa-trash-alt"></i></button>
+            </div>
+            <div class="viewer-controls bottom-center">
+                <button id="imageModalPrevBtn" title="Vorheriges Bild"><i class="fas fa-chevron-left"></i></button>
+                <button id="rotateLeftBtn" title="Nach links drehen"><i class="fas fa-undo"></i></button>
+                <button id="zoomOutBtn" title="Verkleinern"><i class="fas fa-search-minus"></i></button>
+                <button id="zoomInBtn" title="Vergrößern"><i class="fas fa-search-plus"></i></button>
+                <button id="rotateRightBtn" title="Nach rechts drehen"><i class="fas fa-redo"></i></button>
+                <button id="downloadImageBtn" title="Bild herunterladen"><i class="fas fa-download"></i></button>
+                <button id="fullscreenBtn" title="Vollbild umschalten"><i class="fas fa-expand"></i></button>
+                <button id="imageModalNextBtn" title="Nächstes Bild"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="noteModal" class="modal-overlay">
+        <div class="note-modal-content">
+            <h2>Notiz bearbeiten</h2>
+            <textarea id="noteModalTextarea"></textarea>
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                <button id="noteModalSaveBtn">Speichern & Schließen</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customPromptModal" class="modal-overlay">
+        <div class="note-modal-content">
+            <!-- The category number span now also contains the icon and the "Traverse" label -->
+            <span id="promptCategoryNumber" class="modal-category-number">
+                <div class="icon-and-text-group">
+                    <!-- Traverse Icon -->
+                    <img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">
+                    <!-- Traverse Label -->
+                    <div class="traverse-label-in-prompt">Traverse</div>
+                </div>
+                <span class="category-number-display-large"></span>
+            </span>
+            <h2 id="customPromptTitle">Manuelle Eingabe</h2>
+            <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
+            <input type="text" id="customPromptInput" placeholder="Auftrag eingeben" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+            <div style="display: flex; justify-content: center; gap: 10px; width: 100%;">
+                <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;" title="Abbrechen"><i class="fas fa-times"></i></button>
+                <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;" title="OK"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qrCodeModal" class="modal-overlay">
+        <div class="note-modal-content">
+            <h2>QR-Code</h2>
+            <div id="qrCodeContainer" style="margin: 20px auto;"></div>
+            <button id="qrCodeCloseBtn" class="modal-controls button">Schließen</button>
+        </div>
+    </div>
+
+    <!-- NEU: Search Modal -->
+    <div id="searchModal" class="modal-overlay">
+        <div class="note-modal-content">
+            <h2>Suche</h2>
+            <input type="text" id="searchAuftragInput" placeholder="Auftrag eingeben" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+            <div id="searchResultsContainer"></div>
+        </div>
+    </div>
+    
+    <!-- NEW: Bock Selection Modal -->
+    <div id="bockSelectionModal" class="modal-overlay">
+        <div class="note-modal-content">
+            <!-- H-shaped icon at the top -->
+            <svg class="bock-modal-icon" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="10" width="36" height="60" fill="#0056b3"/>
+                <rect x="144" y="10" width="36" height="60" fill="#0056b3"/>
+                <rect x="20" y="30" width="160" height="20" fill="#0056b3"/> <!-- Adjusted y to 30 -->
+                <rect x="10" y="70" width="56" height="20" fill="#0056b3"/>
+                <rect x="134" y="70" width="56" height="20" fill="#0056b3"/>
+            </svg>
+            <span class="bock-modal-label">Rüststation</span>
+            <div id="bockButtonsContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%;">
+                <!-- Buttons 1-8 will be added here by JS -->
+            </div>
+            <button id="bockCancelBtn" title="Schließen"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    
+    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+
+<div id="iconDataLoader" style="display: none;" data-icon-url="https://i.imgur.com/YpR6PdE.png" data-non-fa-na-icon-url="https://i.imgur.com/95LGztY.png"></div>
+
+<!-- NEU: Loading Overlay Element -->
+<div id="loadingOverlay" style="display: none;">
+    <div class="spinner"></div>
+    <span>Laden...</span>
+</div>
+
+<!-- NEW: Chart Modal Structure -->
+<div id="chartModal" class="modal-overlay">
+    <div class="note-modal-content" style="max-width: 884px;"> <!-- Increased max-width by 30% from 680px -->
+        <h2>Diagramm</h2>
+        <table id="chartTable">
+            <thead>
+                <tr style="background-color: #ADD8E6;"> <!-- Light blue background for header row -->
+                    <th style="color: var(--primary);">Datum</th> <!-- Changed to Datum and primary blue -->
+                    <th>
+                        <div class="chart-header-group">
+                            <i class="fas fa-sun" style="color: var(--primary); font-size: 2.4em;"></i> <!-- Changed to primary blue -->
+                            <img src="https://i.imgur.com/95LGztY.png" alt="Nicht FA/NA Symbol" class="chart-header-icon">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="chart-header-group">
+                            <i class="fas fa-sun" style="color: var(--primary); font-size: 2.4em;"></i> <!-- Changed to primary blue -->
+                            <img src="https://i.imgur.com/YpR6PdE.png" alt="FA/NA Symbol" class="chart-header-icon">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="chart-header-group">
+                            <i class="fas fa-moon" style="color: var(--primary); font-size: 2.4em;"></i> <!-- Changed to primary blue -->
+                            <img src="https://i.imgur.com/95LGztY.png" alt="Nicht FA/NA Symbol" class="chart-header-icon">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="chart-header-group">
+                            <i class="fas fa-moon" style="color: var(--primary); font-size: 2.4em;"></i> <!-- Changed to primary blue -->
+                            <img src="https://i.imgur.com/YpR6PdE.png" alt="FA/NA Symbol" class="chart-header-icon">
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="chartTableBody">
+                <tr>
+                    <td id="chartDateCell" class="chart-data-cell"></td>
+                    <td id="chartSunNonFaNa" class="chart-data-cell"></td>
+                    <td id="chartSunFaNa" class="chart-data-cell"></td>
+                    <td id="chartMoonNonFaNa" class="chart-data-cell"></td>
+                    <td id="chartMoonFaNa" class="chart-data-cell"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="chartCloseBtn" class="modal-controls button">Schließen</button>
+    </div>
+</div>
+
+<script>
+/* --- IndexedDB (lokale DB) --- */
+const db = (() => {
+    let dbInstance;
+    function openDB() {
+        return new Promise((resolve, reject) => {
+            if (dbInstance) { resolve(dbInstance); return; }
+            const request = indexedDB.open('BarcodeDB_v3', 2); // Increased version to trigger onupgradeneeded
+            request.onerror = (event) => reject('Datenbankfehler: ' + event.target.errorCode);
+            request.onsuccess = (event) => { dbInstance = event.target.result; resolve(dbInstance); };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                // Create "entries" object store if not exists
+                if (!db.objectStoreNames.contains('entries')) {
+                    const objectStore = db.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
+                    objectStore.createIndex('category', 'category', { unique: false });
+                    objectStore.createIndex('category_code', ['category', 'code'], { unique: true });
+                }
+                
+                // NEW: Create "category_metadata" object store
+                if (!db.objectStoreNames.contains('category_metadata')) {
+                    db.createObjectStore('category_metadata', { keyPath: 'categoryNumber' });
+                }
+            };
+        });
+    }
+    // Führt eine Transaktion in IndexedDB aus
+    async function performTransaction(storeName, mode, action) {
+        const db = await openDB();
+        const transaction = db.transaction(storeName, mode);
+        const store = transaction.objectStore(storeName);
+        return new Promise((resolve, reject) => {
+            const request = action(store);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (event) => reject(event.target.error);
+        });
+    }
+    return {
+        addEntry: (entry) => performTransaction('entries', 'readwrite', store => store.add(entry)),
+        getEntriesForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').getAll(category)),
+        updateEntry: (entry) => performTransaction('entries', 'readwrite', store => store.put(entry)),
+        deleteEntry: (id) => performTransaction('entries', 'readwrite', store => store.delete(id)),
+        getEntryCountForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').count(category)),
+        clearCategory: async (category) => {
+            const db = await openDB();
+            const transaction = db.transaction('entries', 'readwrite');
+            const store = transaction.objectStore('entries');
+            const index = store.index('category');
+            const request = index.openCursor(IDBKeyRange.only(category));
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) { store.delete(cursor.primaryKey); cursor.continue(); }
+            };
+            return new Promise((resolve, reject) => { transaction.oncomplete = () => resolve(); transaction.onerror = (event) => reject(event.target.error); });
+        },
+        getAllEntries: () => performTransaction('entries', 'readonly', store => store.getAll()),
+        
+        // NEW: Functions for category_metadata
+        saveCategoryMetadata: (metadata) => performTransaction('category_metadata', 'readwrite', store => store.put(metadata)),
+        getCategoryMetadata: (categoryNumber) => performTransaction('category_metadata', 'readonly', store => store.get(categoryNumber)),
+    };
+})();
+
+/* --- Hauptanwendungslogik --- */
+
+(async function(){
+    // DOM-Elemente abrufen
+    const categoryGrid1 = document.getElementById('categoryGrid1');
+    const categoryGrid2 = document.getElementById('categoryGrid2');
+    const categoryLabelLeft = document.getElementById('categoryLabelLeft');
+    const mainControls = document.getElementById('mainControls');
+    const listSection = document.getElementById('listSection');
+    const logBody = document.getElementById('logBody');
+    const chartButtonContainer = document.getElementById('chartButtonContainer'); // Hozzáadva a chart gomb konténerének DOM eleme
+
+    // Modale Elemente
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const noteModal = document.getElementById('noteModal');
+    const noteModalTextarea = document.getElementById('noteModalTextarea');
+    const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
+    const imageUploadInput = document.getElementById('imageUploadInput');
+    const customPromptModal = document.getElementById('customPromptModal');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const customPromptInput = document.getElementById('customPromptInput');
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
+    // NEU: Search Modal Elemente
+    const searchModal = document.getElementById('searchModal');
+    const searchAuftragInput = document.getElementById('searchAuftragInput');
+    const searchResultsContainer = document.getElementById('searchResultsContainer');
+    // NEW: Bock Selection Modal Elements
+    const bockSelectionModal = document.getElementById('bockSelectionModal');
+    const bockButtonsContainer = document.getElementById('bockButtonsContainer');
+    const bockCancelBtn = document.getElementById('bockCancelBtn');
+
+    // UPDATED: Image Viewer Controls
+    const closeImageModalBtn = document.getElementById('closeImageModalBtn');
+    const deleteImageBtn = document.getElementById('deleteImageBtn');
+    const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+    const rotateRightBtn = document.getElementById('rotateRightBtn');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const downloadImageBtn = document.getElementById('downloadImageBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Steuerungsbuttons
+    const manualEntryBtn = document.getElementById('manualEntryBtn');
+    const clearCategoryBtn = document.getElementById('clearCategoryBtn');
+    const selectAllUploadsToggle = document.getElementById('selectAllUploadsToggle');
+    const headerDeleteBtn = document.getElementById('headerDeleteBtn');
+    const masterUploadContainer = document.querySelector('.master-upload-container');
+    const searchBtn = document.getElementById('searchBtn');
+    const chartBtn = document.getElementById('chartBtn');
+
+    // Anwendungsstatus
+    let currentCategory = null;
+    let entries = [];
+    let allEntriesData = [];
+    let entryIdToUpdate = null;
+    let noteEntryIdToUpdate = null;
+
+    // Globaler Status für das Bildkarussell im Modal
+    let currentModalImages = [];
+    let currentModalImageIndex = 0;
+    let currentImageEntryId = null;
+
+    // NEW: Global variables for Bock selection flow
+    let currentTriggeringCategoryButton = null;
+    let currentCategoryForBockSelection = null;
+    let currentBockModalFocusIndex = -1;
+
+    // Laser scanner input buffer and timer
+    let laserScannerBuffer = [];
+    let laserScannerTimer = null;
+
+    // Global variable to save the focused category button
+    let focusedCategoryButton = null;
+
+    // Grid constants for navigation
+    const GRID1_COLS = 8;
+    const GRID2_COLS = 12;
+    const GRID1_SIZE = 16;
+    const GRID2_SIZE = 12;
+    const TOTAL_BUTTONS = GRID1_SIZE + GRID2_SIZE;
+
+    // Image Viewer specific state
+    let currentZoom = 1;
+    let currentRotation = 0; // 0, 90, 180, 270 degrees
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let translateX = 0;
+    let translateY = 0;
+    let initialTranslateX = 0; // Store initial translation for proper panning
+    let initialTranslateY = 0; // Store initial translation for proper panning
+
+    // Helper to apply all transforms to the image
+    function applyImageTransform() {
+        modalImage.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg) translate(${translateX}px, ${translateY}px)`;
+    }
+
+    // Update state of viewer controls (zoom, rotate buttons)
+    function updateImageViewerControlsState() {
+        zoomOutBtn.disabled = currentZoom <= 1; // Disable zoom out if at original size
+        zoomInBtn.disabled = currentZoom >= 20; // Increased max zoom to 20x
+    }
+
+    // Update the state of navigation buttons in the image modal
+    function updateImageModalNavigation() {
+        const prevBtn = document.getElementById('imageModalPrevBtn');
+        const nextBtn = document.getElementById('imageModalNextBtn');
+
+        if (currentModalImages.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        } else {
+            prevBtn.style.display = 'inline-flex';
+            nextBtn.style.display = 'inline-flex';
+            prevBtn.disabled = (currentModalImageIndex === 0);
+            nextBtn.disabled = (currentModalImageIndex === currentModalImages.length - 1);
+        }
+    }
+
+    // Show next image (updated to reset transforms)
+    function showNextImage() {
+        if (currentModalImageIndex < currentModalImages.length - 1) {
+            currentModalImageIndex++;
+            modalImage.src = currentModalImages[currentModalImageIndex];
+            currentZoom = 1; // Reset zoom
+            currentRotation = 0; // Reset rotation
+            translateX = 0;
+            translateY = 0;
+            applyImageTransform();
+            updateImageModalNavigation();
+            updateImageViewerControlsState();
+        }
+    }
+
+    // Show previous image (updated to reset transforms)
+    function showPrevImage() {
+        if (currentModalImageIndex > 0) {
+            currentModalImageIndex--;
+            modalImage.src = currentModalImages[currentModalImageIndex];
+            currentZoom = 1; // Reset zoom
+            currentRotation = 0; // Reset rotation
+            translateX = 0;
+            translateY = 0;
+            applyImageTransform();
+            updateImageModalNavigation();
+            updateImageViewerControlsState();
+        }
+    }
+
+    // Zoom functions
+    function zoomIn() {
+        currentZoom = Math.min(currentZoom + 1.0, 20); // Increased zoom step to 1.0
+        applyImageTransform();
+        updateImageViewerControlsState();
+        updateImageCursor(); // Update cursor after zoom
+    }
+
+    function zoomOut() {
+        currentZoom = Math.max(currentZoom - 1.0, 1); // Increased zoom step to 1.0
+        // If zooming out to 1x, reset pan
+        if (currentZoom === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        applyImageTransform();
+        updateImageViewerControlsState();
+        updateImageCursor(); // Update cursor after zoom
+    }
+
+    // Rotate functions
+    function rotateLeft() {
+        currentRotation = (currentRotation - 90 + 360) % 360; // Keep between 0 and 270
+        applyImageTransform();
+    }
+
+    function rotateRight() {
+        currentRotation = (currentRotation + 90) % 360; // Keep between 0 and 270
+        applyImageTransform();
+    }
+
+    // Download image function
+    async function downloadImage() {
+        const imageUrl = currentModalImages[currentModalImageIndex];
+        if (!imageUrl) {
+            showCustomAlert('Kein Bild zum Herunterladen verfügbar.', 'Fehler');
+            return;
+        }
+
+        showLoading("Bild wird heruntergeladen...");
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const entry = entries.find(e => e.id === currentImageEntryId);
+            const filename = entry ? `${entry.code}_traverse_${entry.category}_${currentModalImageIndex + 1}.jpeg` : `image_${currentModalImageIndex + 1}.jpeg`;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up
+        } catch (error) {
+            console.error("Fehler beim Herunterladen des Bildes:", error);
+            showCustomAlert('Beim Herunterladen des Bildes ist ein Fehler aufgetreten.', 'Fehler');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Fullscreen toggle function
+    function toggleFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            imageModal.requestFullscreen().catch(err => {
+                console.error(`Fehler beim Aktivieren des Vollbildmodus: ${err.message} (${err.name})`);
+                showCustomAlert('Der Vollbildmodus ist in Ihrem Browser nicht verfügbar.', 'Fehler');
+            });
+        }
+    }
+
+    // Loading Overlay Steuerungen
+    function showLoading(message = "Laden...") {
+        loadingOverlay.querySelector('span').textContent = message;
+        loadingOverlay.style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    function hideLoading() {
+        loadingOverlay.style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
+    // Funktion zum Fokussieren der Schaltflächen
+    function setButtonFocus(button) {
+        if (!button) return;
+
+        if (focusedCategoryButton && focusedCategoryButton !== button) {
+            focusedCategoryButton.classList.remove('focused');
+        }
+
+        button.classList.add('focused');
+        focusedCategoryButton = button;
+
+        button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        
+        button.focus();
+    }
+
+    // Function to set focus within the bock modal
+    function setBockModalFocus(index) {
+        const allNavigableElements = Array.from(bockButtonsContainer.querySelectorAll('.bock-button')).concat([bockCancelBtn]);
+        if (index >= 0 && index < allNavigableElements.length) {
+            allNavigableElements[index].focus();
+            currentBockModalFocusIndex = index;
+        }
+    }
+
+    // Keydown listener for the bock selection modal
+    bockSelectionModal.addEventListener('keydown', (e) => {
+        if (bockSelectionModal.style.display !== 'flex') return;
+
+        const allNavigableElements = Array.from(bockButtonsContainer.querySelectorAll('.bock-button')).concat([bockCancelBtn]);
+        let currentIdx = currentBockModalFocusIndex;
+
+        if (currentIdx === -1) {
+            setBockModalFocus(0);
+            e.preventDefault();
+            return;
+        }
+
+        let nextIdx = currentIdx;
+        const numCols = 4;
+        const totalBockButtons = 8;
+        const totalNavigableElements = allNavigableElements.length;
+
+        if (e.key === 'ArrowLeft') {
+            nextIdx = (currentIdx - 1 + totalNavigableElements) % totalNavigableElements;
+        } else if (e.key === 'ArrowRight') {
+            nextIdx = (currentIdx + 1) % totalNavigableElements;
+        } else if (e.key === 'ArrowUp') {
+            if (currentIdx === totalNavigableElements - 1) { // If currently on cancel button
+                nextIdx = totalBockButtons - 1; // Move to the last bock button
+            } else if (currentIdx < numCols) { // If in the first row of bock buttons
+                nextIdx = totalNavigableElements - 1; // Move to cancel button
+            } else {
+                nextIdx = currentIdx - numCols;
+            }
+        } else if (e.key === 'ArrowDown') {
+            if (currentIdx === totalNavigableElements - 1) { // If currently on cancel button
+                nextIdx = 0; // Move to the first bock button
+            } else if (currentIdx >= totalBockButtons - numCols) { // If in the last row of bock buttons
+                nextIdx = totalNavigableElements - 1; // Move to cancel button
+            } else {
+                nextIdx = currentIdx + numCols;
+            }
+        } else if (e.key === 'Enter') {
+            allNavigableElements[currentIdx].click();
+            e.preventDefault();
+            return;
+        }
+
+        if (nextIdx !== currentIdx) {
+            setBockModalFocus(nextIdx);
+            e.preventDefault();
+        }
+    });
+
+
+    // Erstellt und initialisiert Kategorie-Buttons
+    for(let i=1; i<=16; i++){
+        const btn = document.createElement('button');
+        const numberSpan = document.createElement('span');
+        numberSpan.textContent = i;
+        numberSpan.classList.add('category-number-display');
+        btn.appendChild(numberSpan);
+
+        const bockNumberSpan = document.createElement('span');
+        bockNumberSpan.classList.add('bock-number-display');
+        btn.appendChild(bockNumberSpan);
+
+        btn.addEventListener('click', () => selectCategory(i, btn));
+        btn.addEventListener('dblclick', async () => {
+            const categoryNum = parseInt(btn.querySelector('.category-number-display').textContent);
+            if (currentCategory !== categoryNum) {
+                await selectCategory(categoryNum, btn);
+            }
+            handleManualEntryTrigger();
+        });
+        btn.setAttribute('tabindex', '0'); // Make button focusable
+        categoryGrid1.appendChild(btn);
+    }
+    for(let i=17; i<=28; i++){
+        const btn = document.createElement('button');
+        const numberSpan = document.createElement('span');
+        numberSpan.textContent = i;
+        numberSpan.classList.add('category-number-display');
+        btn.appendChild(numberSpan);
+
+        const bockNumberSpan = document.createElement('span');
+        bockNumberSpan.classList.add('bock-number-display');
+        btn.appendChild(bockNumberSpan);
+
+        btn.addEventListener('click', () => selectCategory(i, btn));
+        btn.addEventListener('dblclick', async () => {
+            const categoryNum = parseInt(btn.querySelector('.category-number-display').textContent);
+            if (currentCategory !== categoryNum) {
+                await selectCategory(categoryNum, btn);
+            }
+            handleManualEntryTrigger();
+        });
+        btn.setAttribute('tabindex', '0'); // Make button focusable
+        categoryGrid2.appendChild(btn);
+    }
+
+    // Aktualisiert die Farben és Symbole der Kategorie-Buttons basierend auf den Daten
+    async function updateCategoryButtonColors() {
+        const allCategoryButtons = document.querySelectorAll('.grid button');
+        const iconUrl = document.getElementById('iconDataLoader').dataset.iconUrl;
+        const nonFaNaIconUrl = document.getElementById('iconDataLoader').dataset.nonFaNaIconUrl;
+
+        for (const button of allCategoryButtons) {
+            const categoryNum = parseInt(button.querySelector('.category-number-display').textContent);
+            const numberSpan = button.querySelector('.category-number-display');
+            const bockNumberDisplay = button.querySelector('.bock-number-display');
+            
+            button.querySelectorAll('.time-icon, .fa-na-icon, .non-fa-na-icon, .note-status-indicator, .day-letter').forEach(el => el.remove());
+
+            const entriesForCategory = await db.getEntriesForCategory(categoryNum);
+            let hasNoteInAnyEntry = entriesForCategory.some(entry => entry.note && entry.note.trim() !== '');
+
+            let hasFaNaEntry = false;
+            let hasNonFaNaEntry = false;
+
+            const daySpan = document.createElement('span');
+            daySpan.className = 'day-letter';
+            button.appendChild(daySpan);
+
+            button.classList.remove('has-note-blinking');
+
+            if (entriesForCategory.length > 0) {
+                button.classList.remove('empty-category');
+                
+                const latestEntry = entriesForCategory.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                const entryDate = new Date(latestEntry.date);
+                const entryHour = entryDate.getHours();
+
+                const icon = document.createElement('i');
+                icon.classList.add('fas', 'time-icon');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const isPreviousDay = entryDate < today;
+
+                if (entryHour < 14) {
+                    icon.classList.add('fa-sun');
+                    icon.style.color = isPreviousDay ? '#666666' : 'yellow';
+                } else {
+                    icon.classList.add('fa-moon');
+                    icon.style.color = isPreviousDay ? '#666666' : '#F9E79F';
+                }
+                button.appendChild(icon);
+
+                const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+                const dayIndex = entryDate.getDay();
+                daySpan.textContent = days[dayIndex];
+
+                hasFaNaEntry = entriesForCategory.some(entry => entry.code && (entry.code.startsWith('FA') || entry.code.startsWith('NA')));
+                hasNonFaNaEntry = entriesForCategory.some(entry => entry.code && !(entry.code.startsWith('FA') || entry.code.startsWith('NA')));
+
+            } else {
+                button.classList.add('empty-category');
+                daySpan.textContent = '';
+            }
+
+            if (hasFaNaEntry) {
+                const faNaIcon = document.createElement('img');
+                faNaIcon.src = iconUrl;
+                faNaIcon.alt = 'Traversen-Status-Icon';
+                faNaIcon.classList.add('fa-na-icon');
+                button.appendChild(faNaIcon);
+            }
+            if (hasNonFaNaEntry) {
+                const nonFaNaIcon = document.createElement('img'); // Corrected variable name
+                nonFaNaIcon.src = nonFaNaIconUrl;
+                nonFaNaIcon.alt = 'Nicht-FA/NA-Status-Icon';
+                nonFaNaIcon.classList.add('non-fa-na-icon');
+                button.appendChild(nonFaNaIcon);
+            }
+
+            if (hasNoteInAnyEntry) {
+                button.classList.add('has-note-blinking');
+            } else {
+                button.classList.remove('has-note-blinking');
+            }
+
+            const categoryMetadata = await db.getCategoryMetadata(categoryNum);
+            if (categoryMetadata && categoryMetadata.bockNumber) {
+                bockNumberDisplay.textContent = categoryMetadata.bockNumber;
+                bockNumberDisplay.style.display = 'flex';
+            } else {
+                bockNumberDisplay.textContent = '';
+                bockNumberDisplay.style.display = 'none';
+            }
+        }
+    }
+
+    // NEU: Globale Header-Icons aktualisieren
+    async function updateGlobalHeaderIcons() {
+        if (!currentCategory) {
+            if (masterUploadContainer) masterUploadContainer.classList.remove('has-data');
+            if (headerDeleteBtn) {
+                headerDeleteBtn.classList.remove('has-data');
+                headerDeleteBtn.disabled = true;
+            }
+            return;
+        }
+
+        const count = await db.getEntryCountForCategory(currentCategory);
+        const hasData = count > 0;
+
+        if (masterUploadContainer) {
+            if (hasData) {
+                masterUploadContainer.classList.add('has-data');
+            } else {
+                masterUploadContainer.classList.remove('has-data');
+            }
+        }
+        
+        if (headerDeleteBtn) {
+            if (hasData) {
+                headerDeleteBtn.classList.add('has-data');
+                headerDeleteBtn.disabled = false;
+            } else {
+                headerDeleteBtn.classList.remove('has-data');
+                headerDeleteBtn.disabled = true;
+            }
+        }
+    }
+
+    // Aktualisiert die Farbe der unteren Steuerungsbuttons (manuelle Eingabe)
+    function updateControlButtonsColor(isEmpty) {
+        if (isEmpty) {
+            manualEntryBtn.classList.add('empty-category-control');
+        } else {
+            manualEntryBtn.classList.remove('empty-category-control');
+        }
+    }
+
+    // Ereignis-Handler für Kategorieauswahl (einzelner Klick oder Enter)
+    async function selectCategory(num, btn){
+        const prevActive = document.querySelector('.grid button.active');
+        if(prevActive) prevActive.classList.remove('active');
+        
+        btn.classList.add('active');
+        currentCategory = num;
+        currentTriggeringCategoryButton = btn;
+        currentCategoryForBockSelection = num;
+
+        try {
+            entries = await db.getEntriesForCategory(currentCategory);
+            const isEmpty = entries.length === 0;
+            
+            updateHeaderAndControls();
+            updateTraverseHeader();
+            await updateGlobalHeaderIcons();
+            await updateBockHeader(); // NEW: Update the Bock header when category changes
+            updateTableHeaderColors(); // NEW: Update table header colors based on data
+            
+            mainControls.style.display = 'block';
+            listSection.style.display = 'block';
+            renderTable();
+            await updateCategoryButtonColors();
+            updateControlButtonsColor(isEmpty);
+            setButtonFocus(currentTriggeringCategoryButton);
+
+        } catch (error) {
+            console.error("Fehler beim Laden der Traversendaten:", error);
+            showCustomAlert('Beim Laden der Traversendaten ist ein Fehler aufgetreten.', 'Fehler');
+        }
+    }
+
+    // Hilfsfunktion zum Aktualisieren des unteren Labels és der Steuerleiste
+    function updateHeaderAndControls() {
+        if (!currentCategory) {
+            categoryLabelLeft.innerHTML = '';
+            categoryLabelLeft.style.color = 'var(--muted)';
+            return;
+        }
+
+        const isEmpty = entries.length === 0;
+        const iconColor = isEmpty ? '%236c757d' : '%230056b3';
+        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
+
+        // For the bottom control bar, we'll also use the new structure for consistency
+        // but keep the currentCategory number as the primary display next to it.
+        categoryLabelLeft.innerHTML = `
+            <div class="icon-and-text-group">
+                ${iconSvg}
+                <div class="traverse-label-in-prompt" style="font-size: 0.5em; margin-bottom: 0;">Traverse</div>
+            </div>
+            <span class="traverse-number-in-controls">${currentCategory}</span>
+        `;
+        // The color for the entire categoryLabelLeft (including the number) is set here
+        categoryLabelLeft.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)';
+        categoryLabelLeft.style.display = 'flex'; /* Ensure it's a flex container */
+        categoryLabelLeft.style.alignItems = 'center'; /* Align items vertically */
+        categoryLabelLeft.style.justifyContent = 'center'; /* Center content horizontally */
+    }
+
+    // NEU: Funktion zum Aktualisieren des Tabellenkopfes
+    function updateTraverseHeader() {
+        const traverseHeader = document.getElementById('traverse-header');
+        if (!traverseHeader) return;
+
+        if (!currentCategory) {
+            traverseHeader.innerHTML = '#';
+            traverseHeader.style.color = 'var(--muted)';
+            traverseHeader.style.fontWeight = 'bold';
+            traverseHeader.style.fontSize = '0.9em';
+            return;
+        }
+
+        const isEmpty = entries.length === 0;
+        const iconColor = isEmpty ? '%236c757d' : '%230056b3';
+        const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="header-traverse-icon">`;
+
+        // For the table header, just the icon is usually sufficient.
+        // If the user wants the number or label here, they can specify.
+        traverseHeader.innerHTML = `${iconSvg}`;
+        traverseHeader.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)';
+        traverseHeader.style.fontWeight = 'bold';
+        traverseHeader.style.fontSize = '1.5em';
+    }
+
+    // NEW: Function to update the Bock header in the table
+    async function updateBockHeader() {
+        const bockHeaderCell = document.getElementById('bock-header-cell');
+        if (!bockHeaderCell) return;
+        // No need to get headerBockNumberSpan as it's removed from HTML
+        // const headerBockNumberSpan = document.getElementById('headerBockNumber');
+
+        // Always set headerBockNumber to empty string as per user request "ne legyen melette a felirat"
+        // headerBockNumberSpan.textContent = ''; // This line is no longer needed
+
+        if (!currentCategory) {
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; // Default color for the icon
+            return;
+        }
+
+        const categoryMetadata = await db.getCategoryMetadata(currentCategory);
+        const bockNumber = categoryMetadata ? categoryMetadata.bockNumber : null;
+
+        if (bockNumber) {
+            // No text content here, only the icon changes color
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--primary)'; // Blue if a bock number is set
+        } else {
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; // Muted if no bock number
+        }
+    }
+
+    // NEW: Function to update the table header (th) colors based on data presence
+    function updateTableHeaderColors() {
+        const tableElement = document.querySelector('table');
+        if (!tableElement) return;
+
+        if (currentCategory === null || entries.length === 0) {
+            tableElement.classList.remove('has-data-selected');
+        } else {
+            tableElement.classList.add('has-data-selected');
+        }
+    }
+
+    // Zeigt ein benutzerdefiniertes Alert-Modal an
+    function showCustomAlert(message, title = 'Information') {
+        const existingModal = document.getElementById('customAlertModal');
+        if (existingModal) existingModal.remove();
+
+        const alertModal = document.createElement('div');
+        alertModal.id = 'customAlertModal';
+        alertModal.classList.add('modal-overlay');
+        alertModal.innerHTML = `
+            <div class="note-modal-content">
+                <h2>${title}</h2>
+                <p>${message}</p>
+                <button id="customAlertCloseBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; align-self: flex-end;">OK</button>
+            </div>
+        `;
+        document.body.appendChild(alertModal);
+        alertModal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+
+        const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+
+        const closeAlertModal = () => {
+            alertModal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            alertModal.remove();
+        };
+
+        customAlertCloseBtn.addEventListener('click', closeAlertModal);
+
+        alertModal.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === 'Escape') {
+                e.preventDefault();
+                closeAlertModal();
+            }
+        });
+
+        customAlertCloseBtn.focus();
+
+        alertModal.addEventListener('click', (e) => {
+            if (e.target === alertModal) {
+                closeAlertModal();
+            }
+        });
+    }
+
+    // Einfaches Bestätigungs-Modal zum Löschen von Bildern
+    function showSimpleConfirm(message, title = 'Bestätigung') {
+        return new Promise(resolve => {
+            const existingModal = document.getElementById('customConfirmModal');
+            if (existingModal) existingModal.remove();
+
+            const confirmModal = document.createElement('div');
+            confirmModal.id = 'customConfirmModal';
+            confirmModal.classList.add('modal-overlay');
+            
+            confirmModal.innerHTML = `
+                <div class="note-modal-content">
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; width: 100%; margin-top: 20px;">
+                        <button id="customConfirmCancelBtn">Abbrechen</button>
+                        <button id="customConfirmOkBtn">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+            confirmModal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+
+            const okBtn = document.getElementById('customConfirmOkBtn');
+            const cancelBtn = document.getElementById('customConfirmCancelBtn');
+
+            const close = (result) => {
+                confirmModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                confirmModal.remove();
+                resolve(result);
+            };
+
+            okBtn.addEventListener('click', () => close(true));
+            cancelBtn.addEventListener('click', () => close(false));
+            
+            confirmModal.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    okBtn.click();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelBtn.click();
+                }
+            });
+
+            okBtn.focus();
+
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) {
+                    close(false);
+                }
+            });
+        });
+    }
+
+    // Komplexeres Bestätigungs-Modal mit PDF-Export-Option
+    function showCustomConfirm(message, title = 'Bestätigung', entry = null) {
+        return new Promise(resolve => {
+            const existingModal = document.getElementById('customConfirmModal');
+            if (existingModal) existingModal.remove();
+
+            const confirmModal = document.createElement('div');
+            confirmModal.id = 'customConfirmModal';
+            confirmModal.classList.add('modal-overlay');
+            
+            const isCheckedByDefault = !(entry && (entry.code.startsWith('FA') || entry.code.startsWith('NA')));
+
+            confirmModal.innerHTML = `
+                <div class="note-modal-content">
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.9em;">
+                            <input type="checkbox" id="exportPdfCheckbox" ${isCheckedByDefault ? 'checked' : ''} style="margin-right: 8px; width: 18px; height: 18px; transform: scale(1.2);">
+                            PDF exportieren
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="customConfirmCancelBtn">Abbrechen</button>
+                            <button id="customConfirmOkBtn">Löschen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+            confirmModal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+
+            const okBtn = document.getElementById('customConfirmOkBtn');
+            const cancelBtn = document.getElementById('customConfirmCancelBtn');
+
+            document.getElementById('customConfirmOkBtn').addEventListener('click', () => {
+                const exportPdf = document.getElementById('exportPdfCheckbox').checked;
+                confirmModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                confirmModal.remove();
+                resolve({ confirmed: true, exportPdf: exportPdf });
+            });
+            document.getElementById('customConfirmCancelBtn').addEventListener('click', () => {
+                confirmModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                confirmModal.remove();
+                resolve({ confirmed: false, exportPdf: false });
+            });
+            
+            confirmModal.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    okBtn.click();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelBtn.click();
+                }
+            });
+
+            okBtn.focus();
+
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) {
+                    close(false);
+                }
+            });
+        });
+    }
+
+    // Open image modal (updated for new features)
+    function openImageModal(images, startIndex, entryId) {
+        currentModalImages = images;
+        currentModalImageIndex = startIndex;
+        currentImageEntryId = entryId;
+
+        modalImage.src = currentModalImages[currentModalImageIndex];
+
+        // Reset transformations
+        currentZoom = 1;
+        currentRotation = 0;
+        translateX = 0;
+        translateY = 0;
+        applyImageTransform();
+
+        imageModal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        imageModal.focus(); // Focus the modal when it opens
+
+        updateImageModalNavigation();
+        updateImageViewerControlsState();
+        updateImageCursor(); // Set initial cursor
+    }
+
+    // Pan functionality (refined)
+    modalImage.addEventListener('mousedown', onMouseDown);
+
+    // dragStartX, dragStartY, initialTranslateX, initialTranslateY are already global
+
+    function onMouseDown(e) {
+        if (e.button === 0 && currentZoom > 1) { // Only left mouse button (0) and if zoomed in
+            e.preventDefault(); // Prevent default browser drag behavior
+            isDragging = true;
+            initialTranslateX = translateX; // Store current image translation
+            initialTranslateY = translateY;
+            dragStartX = e.clientX; // Store current mouse position
+            dragStartY = e.clientY;
+            modalImage.style.cursor = 'grabbing'; // Change cursor to grabbing
+            
+            // Attach listeners to document to capture events even if mouse leaves the image
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        }
+    }
+
+    function onMouseMove(e) {
+        if (!isDragging) return; // Only pan if dragging is active
+        e.preventDefault(); // Prevent text selection etc.
+
+        // Calculate new translation based on mouse movement and zoom level
+        // Divide by currentZoom to reduce sensitivity at higher zoom levels
+        translateX = initialTranslateX + (e.clientX - dragStartX) / currentZoom;
+        translateY = initialTranslateY + (e.clientY - dragStartY) / currentZoom;
+        applyImageTransform();
+    }
+
+    function onMouseUp(e) {
+        // This function will be attached to the document, so it catches releases anywhere.
+        // We only stop dragging if the left button was the one released.
+        if (e.button === 0) {
+            isDragging = false;
+            modalImage.classList.remove('zoomed'); // Remove grabbing cursor class
+            // Remove document-level listeners
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            updateImageCursor(); // Update cursor based on current zoom state
+        }
+    }
+
+    // mouseleave on modalImage is still a good fallback for when the mouse leaves the browser window
+    modalImage.addEventListener('mouseleave', () => {
+        if (isDragging) { // If mouse leaves the image while dragging
+            // This is a safety net. The document.mouseup should ideally catch the release.
+            // But if the mouse leaves the *browser window*, mouseup won't fire.
+            // So, this ensures dragging stops if the cursor goes off the image.
+            isDragging = false;
+            modalImage.classList.remove('zoomed');
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            updateImageCursor(); // Update cursor based on current zoom state
+        }
+    });
+
+    // Function to update the image cursor based on zoom level and dragging state
+    function updateImageCursor() {
+        if (isDragging) {
+            modalImage.style.cursor = 'grabbing';
+        } else if (currentZoom > 1) {
+            modalImage.style.cursor = 'grab';
+        } else {
+            modalImage.style.cursor = 'zoom-in';  
+        }
+    }
+
+    // Touch events for panning (mobile)
+    modalImage.addEventListener('touchstart', (e) => {
+        if (currentZoom > 1 && e.touches.length === 1) {
+            isDragging = true;
+            initialTranslateX = translateX;
+            initialTranslateY = translateY;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            modalImage.classList.add('zoomed');
+            updateImageCursor();
+        }
+    }, { passive: false });
+
+    modalImage.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault(); // Prevent scrolling
+        translateX = initialTranslateX + (e.touches[0].clientX - startX) / currentZoom; // Divide by currentZoom for touch too
+        translateY = initialTranslateY + (e.touches[0].clientY - startY) / currentZoom; // Divide by currentZoom for touch too
+        applyImageTransform();
+    }, { passive: false });
+
+    modalImage.addEventListener('touchend', () => {
+        isDragging = false;
+        modalImage.classList.remove('zoomed');
+        updateImageCursor();
+    });
+
+    // NEW: Mouse wheel zoom
+    modalImage.addEventListener('wheel', (e) => {
+        e.preventDefault(); // Prevent page scrolling
+        const zoomAmount = 0.1; // Keep this small for fine control with wheel
+        const oldZoom = currentZoom;
+
+        // Calculate mouse position relative to the image
+        const rect = modalImage.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        // Calculate current image center relative to its container
+        const imageCenterX = rect.width / 2;
+        const imageCenterY = rect.height / 2;
+
+        // Calculate relative position of mouse from image center
+        const relativeMouseX = (mouseX - imageCenterX) / oldZoom;
+        const relativeMouseY = (mouseY - imageCenterY) / oldZoom;
+
+        if (e.deltaY < 0) { // Zoom in
+            currentZoom = Math.min(currentZoom + zoomAmount, 20); // Increased max zoom to 20x
+        } else { // Zoom out
+            currentZoom = Math.max(currentZoom - zoomAmount, 1);
+        }
+
+        // Adjust translation to keep the point under the mouse cursor fixed
+        // This formula helps to zoom into the mouse pointer location
+        translateX += (relativeMouseX * (oldZoom - currentZoom));
+        translateY += (relativeMouseY * (oldZoom - currentZoom));
+
+        // If zoomed out to 1x, reset pan
+        if (currentZoom === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+
+        applyImageTransform();
+        updateImageViewerControlsState();
+        updateImageCursor(); // Update cursor after zoom
+    });
+
+
+    // Löscht das aktuelle Bild aus dem Modal und der Datenbank (updated for new structure)
+    async function deleteCurrentImage() {
+        if (!currentImageEntryId || currentModalImages.length === 0) {
+            showCustomAlert('Kein Bild zum Löschen verfügbar.', 'Fehler');
+            return;
+        }
+
+        const confirmed = await showSimpleConfirm('Sind Sie sicher, dass Sie dieses Bild löschen möchten?', 'Bild löschen');
+        if (!confirmed) {
+            return;
+        }
+
+        showLoading("Bild wird gelöscht...");
+        try {
+            let entry = entries.find(e => e.id === currentImageEntryId);
+            if (entry) {
+                const imageUrlToDelete = currentModalImages[currentModalImageIndex];
+
+                // If the primary image is being deleted
+                if (entry.image === imageUrlToDelete) {
+                    if (entry.kepek && entry.kepek.length > 0) {
+                        entry.image = entry.kepek.shift(); // Promote first kepek image to primary
+                    } else {
+                        entry.image = null; // No more images for this entry
+                    }
+                } else if (entry.kepek) { // If it's a secondary image
+                    const indexToDelete = entry.kepek.indexOf(imageUrlToDelete);
+                    if (indexToDelete > -1) {
+                        entry.kepek.splice(indexToDelete, 1);
+                    }
+                }
+
+                await db.updateEntry(entry);
+                // Update the 'entries' array in memory with the modified entry
+                entries = entries.map(e => e.id === entry.id ? entry : e);
+                renderTable(); // Re-render the table to reflect changes
+
+                const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+                if (allRemainingImages.length > 0) {
+                    // Adjust index if the deleted image was the last one
+                    if (currentModalImageIndex >= allRemainingImages.length) {
+                        currentModalImageIndex = allRemainingImages.length - 1;
+                    }
+                    openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId); // Re-open with updated image list
+                } else {
+                    closeModal(imageModal); // Close modal if no images left
+                }
+            }
+        } catch (error) {
+            console.error("Fehler beim Löschen des Bildes:", error);
+            showCustomAlert('Beim Löschen des Bildes ist ein Fehler aufgetreten.', 'Fehler');
+        } finally {
+            hideLoading();
+        }
+    }
+
+
+    // renderTable mit der Spalte für die laufende Nummer
+    function renderTable(){
+        const sortedEntries = entries.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
+        logBody.innerHTML = sortedEntries.map((e,i) => {
+            const entryDate = new Date(e.date);
+            const formattedDate = entryDate.toLocaleDateString('de-DE');
+            const formattedTime = entryDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+            const allImageSources = [e.image, ...(e.kepek || [])].filter(Boolean);
+            let photosCellHtml = '';
+            for (let j = 0; j < allImageSources.length; j += 3) {
+                photosCellHtml += `<div class="photoRow">${allImageSources.slice(j, j + 3).map(src => `<img src="${src}" alt="Bild">`).join('')}</div>`;
+            }
+
+            const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
+
+            let codeClass = '';
+            if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) {
+                codeClass = 'auftrag-colored';
+            } else if (e.source === 'scanner' || e.source === 'manual' || e.source === 'laser') {
+                codeClass = 'auftrag-manual-bold';
+            }
+            
+            const bockDisplay = e.bockNumber ? e.bockNumber : '';
+
+            return `
+            <tr data-id="${e.id}">
+                <td>
+                    <span class="traverse-row-number">${currentCategory}</span>
+                </td>
+                <td class="${codeClass}">
+                    <span class="auftrag-clickable" data-code="${e.code}" title="QR-Code anzeigen">${e.code}</span>
+                </td>
+                <td><span class="bock-row-number">${bockDisplay}</span></td>
+                <td>
+                    ${formattedDate}<br>
+                    <span style="font-size: 0.85em; color: var(--muted);"> ${formattedTime}</span>
+                </td>
+                <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-sticky-note' : 'fa-plus'}"></i></button></td>
+                <td class="photo-cell">${photosCellHtml}</td>
+                <td>
+                    <label style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <input type="checkbox" class="upload-checkbox" data-id="${e.id}" title="Bild zu diesem Auftrag hinzufügen">
+                        <button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button>
+                    </label>
+                </td>
+                <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
+            </tr>`;
+        }).join('');
+        attachTableEventListeners();
+    }
+
+    // Fügt Ereignis-Listener zu den Tabellenelementen hinzu
+    function attachTableEventListeners() {
+        logBody.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', handleDelete));
+        logBody.querySelectorAll('.noteToggleBtn').forEach(btn => btn.addEventListener('click', openNoteModal));
+        logBody.querySelectorAll('.photo-cell img').forEach(img => img.addEventListener('click', (event) => {
+            const entryId = parseInt(event.target.closest('tr').dataset.id);
+            const entry = entries.find(e => e.id === entryId);
+            if (entry) {
+                const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+                const clickedImageSrc = event.target.src;
+                const clickedImageIndex = allImageSources.indexOf(clickedImageSrc);
+                openImageModal(allImageSources, clickedImageIndex, entryId);
+            }
+        }));
+        logBody.querySelectorAll('.uploadPhotoBtn').forEach(btn => btn.addEventListener('click', handleUploadPhotoClick));
+        
+        if (selectAllUploadsToggle) {
+            selectAllUploadsToggle.removeEventListener('change', handleMasterToggleChange);
+            selectAllUploadsToggle.addEventListener('change', handleMasterToggleChange);
+        }
+
+        const masterUploadContainer = document.querySelector('.master-upload-container');
+        if (masterUploadContainer) {
+            masterUploadContainer.removeEventListener('click', handleMasterContainerClick);
+            masterUploadContainer.addEventListener('click', handleMasterContainerClick);
+        }
+        
+        if (headerDeleteBtn) {
+            headerDeleteBtn.removeEventListener('click', handleHeaderDeleteClick);
+            headerDeleteBtn.addEventListener('click', handleHeaderDeleteClick);
+        }
+
+        // UPDATED: QR code modal now opens on clicking the 'auftrag-clickable' span
+        logBody.querySelectorAll('.auftrag-clickable').forEach(span => {
+            span.addEventListener('click', (event) => {
+                const orderCode = event.currentTarget.dataset.code;
+                showQrCodeModal(orderCode);
+            });
+        });
+    }
+
+    // Neue Funktion zur Behandlung des Change-Events der Master-Checkbox
+    function handleMasterToggleChange(event) {
+        const isChecked = event.target.checked;
+        logBody.querySelectorAll('.upload-checkbox').forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+    }
+
+    // Neue Funktion zur Behandlung des Klick-Events des Master-Upload-Containers
+    function handleMasterContainerClick(event) {
+        if (event.target !== selectAllUploadsToggle) {
+            selectAllUploadsToggle.checked = !selectAllUploadsToggle.checked;
+            selectAllUploadsToggle.dispatchEvent(new Event('change'));
+        }
+    }
+    
+    // NEU: Header-Löschtaste-Klick-Handler
+    async function handleHeaderDeleteClick() {
+        if (!currentCategory) {
+            showCustomAlert('Keine Kategorie zum Löschen ausgewählt.', 'Fehler');
+            return;
+        }
+        
+        const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
+        const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
+        
+        const result = await showCustomConfirm(`Biztosan törölni szeretné ${dummyEntryForCheckbox ? 'az összes FA/NA bejegyzést' : 'az összes bejegyzést'} ebből a kategóriából?`, 'Megerősítés', dummyEntryForCheckbox);
+        
+        if (result.confirmed) {
+            showLoading("Kategória törlése...");
+            try {
+                if (result.exportPdf) {
+                    for (const entry of entries) {
+                        await generatePdfForEntry(entry);
+                    }
+                }
+                
+                await db.clearCategory(currentCategory);
+                await db.saveCategoryMetadata({ categoryNumber: currentCategory, bockNumber: null });
+                entries = [];
+                renderTable();
+                await updateCategoryButtonColors();
+                updateTraverseHeader();
+                await updateBockHeader(); // NEW: Update Bock header after clearing category
+                updateTableHeaderColors(); // NEW: Update table header colors
+
+                const count = await db.getEntryCountForCategory(currentCategory);
+                if (count === 0) {
+                    categoryLabelLeft.style.color = 'var(--muted)';
+                    updateControlButtonsColor(true);
+                }
+                await updateGlobalHeaderIcons();
+                updateHeaderAndControls();
+
+            } catch (error) {
+                console.error("Fehler beim Löschen oder Exportieren.", error);
+                showCustomAlert('Beim Lölés vagy exportálás során hiba történt.', 'Hiba');
+            } finally {
+                hideLoading();
+            }
+        }
+    }
+    
+    // Lädt ein Bild (gibt ein Promise mit einem Image-Objekt zurück)
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = () => {
+                console.warn(`Fehler beim Bereinigen des Bildes: ${src.substring(0, 50)}...`);
+                reject(new Error('Fehler beim Laden des Bildes für die Bereinigung.'));
+            };
+            img.src = src;
+        });
+    }
+
+    // --- PDF-GENERIERUNG (VERBESSERT) ---
+    async function generatePdfForEntry(entry) {
+        if (typeof window.jspdf === 'undefined') {
+            console.error('jsPDF ist nicht geladen!');
+            showCustomAlert('PDF-Export fehlgeschlagen: jsPDF Bibliothek nem található.', 'Hiba');
+            return;
+        }
+        showLoading("PDF wird generiert...");
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const entryDate = new Date(entry.date);
+        const formattedDateTime = entryDate.toLocaleString('de-DE', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+        });
+        const entryHour = entryDate.getHours();
+        const shiftText = entryHour < 14 ? 'Frühschicht' : 'Spätschicht';
+
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text(`Auftrag: ${entry.code}`, 10, 20);
+
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(18);
+        doc.text(`Datum: ${formattedDateTime}`, 10, 35);
+        
+        doc.text(shiftText, 10, 50);
+
+        doc.text('Traverse: ', 10, 65);
+        // MODIFIED: Make traverse number not bold
+        doc.text(String(entry.category), 10 + doc.getStringUnitWidth('Traverse: ') * 18 / doc.internal.scaleFactor, 65);
+        doc.setFont(undefined, 'normal'); // Ensure font is normal for subsequent text
+
+        let yPos = 80;
+        if (entry.bockNumber) {
+            doc.setFontSize(18);
+            // MODIFIED: Change "Bock-Nummer" to "Rüststation"
+            doc.text(`Rüststation: ${entry.bockNumber}`, 10, yPos);  
+            yPos += 15;
+        }
+
+        if (entry.note) {
+            doc.setFontSize(18);
+            const noteWithLabel = `Notiz: ${entry.note}`;
+            const splitText = doc.splitTextToSize(noteWithLabel, 180);
+            doc.text(splitText, 10, yPos);
+            yPos += (splitText.length * 10);
+        }
+
+        const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+        const imageLoadResults = await Promise.allSettled(allImageSources.map(loadImage));
+        
+        const loadedImages = [];
+        let failedImageCount = 0;
+        imageLoadResults.forEach(result => {
+            if (result.status === 'fulfilled') {
+                loadedImages.push(result.value);
+            } else {
+                console.error("Ein Bild konnte nicht für PDF geladen werden:", result.reason);
+                failedImageCount++;
+            }
+        });
+
+        if (failedImageCount > 0) {
+            showCustomAlert(`${failedImageCount} Bilder konnten nicht für den PDF-Export geladen werden und wurden übersprungen.`, 'Warnung');
+        }
+
+        for (let i = 0; i < loadedImages.length; i++) {
+            const imageData = loadedImages[i];
+            yPos += 10;
+            if (yPos > 220) {
+                doc.addPage();
+                yPos = 10;
+            }
+            doc.setFontSize(18);
+            doc.text(`Bild ${i + 1}`, 10, yPos);
+            yPos += 8;
+
+            try {
+                const imgProps = doc.getImageProperties(imageData);
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = doc.internal.pageSize.getHeight();
+                const maxWidth = pdfWidth - 20;
+                const maxHeight = pdfHeight - yPos - 10;
+
+                let imgWidth = imgProps.width;
+                let imgHeight = imgProps.height;
+                const ratio = imgWidth / imgHeight;
+
+                if (imgWidth > maxWidth) {
+                    imgWidth = maxWidth;
+                    imgHeight = imgWidth / ratio;
+                }
+                if (imgHeight > maxHeight) {
+                    imgHeight = maxHeight;
+                    imgWidth = imgHeight * ratio;
+                }
+
+                if (yPos + imgHeight > pdfHeight - 10) {
+                    doc.addPage();
+                    yPos = 10;
+                }
+
+                doc.addImage(imageData, undefined, 10, yPos, imgWidth, imgHeight);
+                yPos += imgHeight + 5;
+            } catch (e) {
+                console.error("Fehler beim Hinzufügen des Bildes zum PDF:", e);
+                if (yPos > 280) { doc.addPage(); yPos = 10; }
+                doc.text(`[Bild ${i + 1} konnte nicht verarbeitet werden]`, 10, yPos);
+                yPos += 15;
+            }
+        }
+        
+        // MODIFIED: Change PDF filename format
+        const auftragName = entry.code.replace(/_/g, ' ');
+        const travNumber = String(entry.category).replace(/_/g, ' ');
+        const rstNumber = String(entry.bockNumber || '0').replace(/_/g, ' ');
+        doc.save(`${auftragName} trav${travNumber} rst${rstNumber}.pdf`);
+        hideLoading();
+    }
+
+    // Löschereignis-Handler
+    async function handleDelete(event) {
+        const id = parseInt(event.currentTarget.dataset.id);
+        const entryToDelete = entries.find(e => e.id === id);
+        if (!entryToDelete) return;
+
+        const result = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag "${entryToDelete.code}" löschen möchten?`, 'Bestätigung', entryToDelete);
+        
+        if (result.confirmed) {
+            showLoading("Eintrag wird gelöscht...");
+            try {
+                if (result.exportPdf) {
+                    await generatePdfForEntry(entryToDelete); // Generate PDF only for the single deleted entry
+                }
+                
+                await db.deleteEntry(id);
+                entries = entries.filter(e => e.id !== id);
+                renderTable();
+                await updateCategoryButtonColors();
+                updateTraverseHeader();
+                await updateBockHeader(); // NEW: Update Bock header after deleting entry
+                updateTableHeaderColors(); // NEW: Update table header colors
+
+                const count = await db.getEntryCountForCategory(currentCategory);
+                if (count === 0) {
+                    categoryLabelLeft.style.color = 'var(--muted)';
+                    updateControlButtonsColor(true);
+                }
+                await updateGlobalHeaderIcons();
+                updateHeaderAndControls();
+
+            } catch (error) {
+                console.error("Fehler beim Löschen oder Exportieren.", error);
+                showCustomAlert('Beim Lölés vagy exportálás során hiba történt.', 'Hiba');
+            } finally {
+                hideLoading();
+            }
+        }
+    }
+
+    // Öffnet das Notiz-Modal
+    function openNoteModal(event) {
+        noteEntryIdToUpdate = parseInt(event.currentTarget.dataset.id);
+        const entry = entries.find(e => e.id === noteEntryIdToUpdate);
+        if (entry) {
+            noteModalTextarea.value = entry.note || '';
+            noteModal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+            noteModalTextarea.focus();
+        }
+    }
+
+    // Speichert die Notiz aus dem Modal
+    async function saveNoteFromModal() {
+        showLoading("Notiz wird gespeichert...");
+        try {
+            const entry = entries.find(e => e.id === noteEntryIdToUpdate);
+            if (entry) {
+                entry.note = noteModalTextarea.value;
+                await db.updateEntry(entry);
+                renderTable();
+                await updateCategoryButtonColors();
+            }
+            noteModal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        } catch (error) { // Added catch block
+            console.error("Fehler beim Speichern der Notiz:", error);
+            showCustomAlert('Beim Speichern der Notiz ist ein Fehler aufgetreten.', 'Fehler');
+        } finally { // Added finally block
+            hideLoading();
+        }
+    }
+
+    // Ereignis-Handler für den Bild-Upload-Button-Klick
+    function handleUploadPhotoClick(event) {
+        const rowId = parseInt(event.currentTarget.closest('tr').dataset.id);
+        entryIdToUpdate = rowId;
+
+        imageUploadInput.click();
+    }
+    
+    // Bereinigt das Bild (Größenanpassung/Komprimierung in JPEG)
+    function sanitizeImage(imageDataUrl, quality = 0.95) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = () => {
+                console.warn(`Fehler beim Bereinigen des Bildes: ${imageDataUrl.substring(0, 50)}...`);
+                reject(new Error('Fehler beim Laden des Bildes für die Bereinigung.'));
+            };
+            img.src = imageDataUrl;
+        });
+    }
+
+    // Ereignis-Handler für Dateiauswahl (für Bild-Upload)
+    async function handleFileSelected(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        showLoading("Bild wird verarbeitet...");
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const sanitizedImageDataUrl = await sanitizeImage(e.target.result);
+                
+                const checkedUploadCheckboxes = document.querySelectorAll('.upload-checkbox:checked');
+                let targetEntryIds = [];
+
+                if (checkedUploadCheckboxes.length > 0) {
+                    checkedUploadCheckboxes.forEach(checkbox => {
+                        const rowId = parseInt(checkbox.dataset.id); // Get the row's data-id
+                        targetEntryIds.push(rowId);
+                    });
+                } else {
+                    targetEntryIds.push(entryIdToUpdate);
+                }
+
+                for (const id of targetEntryIds) {
+                    let entry = entries.find(entry => entry.id === id);
+                    if (entry) {
+                        if (!entry.kepek) entry.kepek = [];
+                        entry.kepek.push(sanitizedImageDataUrl);
+                        await db.updateEntry(entry);
+                    } else {
+                        console.warn(`Eintrag mit ID ${id} zum Aktualisieren nem található.`);
+                    }
+                }
+                
+                entries = await db.getEntriesForCategory(currentCategory);
+                renderTable();
+                await updateCategoryButtonColors();
+                await navigator.vibrate?.(100);
+
+            } catch (error) {
+                console.error("Bildverarbeitung fehlgeschlagen:", error);
+                showCustomAlert('A kép feldolgozása sikertelen. Lehet, hogy sérült.', 'Hiba');
+            } finally {
+                hideLoading();
+                document.querySelectorAll('.upload-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                if (selectAllUploadsToggle) {
+                    selectAllUploadsToggle.checked = false;
+                }
+            }
+        };
+        reader.readAsDataURL(file);
+
+        event.target.value = null;
+    }
+
+    // Neuen Eintrag hinzufügen
+    async function addNewEntry(code, image, source) {
+        if (currentCategory === null) {
+            showCustomAlert('Kérjük, válasszon ki egy kategóriát, mielőtt bejegyzést adna hozzá!', 'Kategória hiányzik');
+            return;
+        }
+
+        if (!code) return;
+        
+        const existingEntryInCurrentCategory = entries.find(e => e.category === currentCategory && e.code === code);
+        if (existingEntryInCurrentCategory) {
+            showCustomAlert(`Ez az azonosító ("${code}") már létezik ebben a kategóriában (${currentCategory}). Kérjük, használjon egyedi azonosítót.`, 'Duplikált bejegyzés');
+            return;
+        }
+
+        const categoryMetadata = await db.getCategoryMetadata(currentCategory);
+        const bockNumberForEntry = categoryMetadata ? categoryMetadata.bockNumber : null;
+
+        const newEntry = {
+            // id: null, // Removed this line to let IndexedDB auto-increment
+            code: code,
+            date: new Date().toISOString(),
+            note: '',
+            image: image,
+            kepek: [],
+            category: currentCategory,
+            source: source,
+            bockNumber: bockNumberForEntry
+        };
+
+        showLoading("Bejegyzés hozzáadása...");
+        try {
+            const wasEmpty = entries.length === 0;
+            const newId = await db.addEntry(newEntry);
+            newEntry.id = newId; // This assignment is correct *after* the add operation
+            entries.push(newEntry);
+            renderTable();
+            await updateCategoryButtonColors();
+            await updateGlobalHeaderIcons();
+            updateHeaderAndControls();
+            await updateBockHeader(); // NEW: Update Bock header after adding new entry
+            updateTableHeaderColors(); // NEW: Update table header colors
+
+            if (wasEmpty) {
+                updateControlButtonsColor(false);
+                updateTraverseHeader();
+            }
+
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
+            const dataForSheet = {
+                code: newEntry.code,
+                date: new Date(newEntry.date).toLocaleString('de-DE'),
+                category: newEntry.category,
+                bockNumber: newEntry.bockNumber
+            };
+            fetch(webAppUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(dataForSheet)
+            }).catch(error => console.error('Hiba a Google táblázatba való küldéskor:', error));
+
+        } catch(e) {
+            if (e.name === 'ConstraintError') {
+                showCustomAlert(`Ez az azonosító ("${newEntry.code}") már létezik ebben a kategóriában (${newEntry.category}). Kérjük, használjon egyedi azonosítót.`, 'Duplikált bejegyzés');
+            } else {
+                console.error('Hiba a helyi mentéskor:', e);
+                showCustomAlert('Hiba a helyi mentéskor! Az adatok nem lettek elmentve.', 'Hiba');
+            }
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Ereignis-Handler für den Button zur manuellen Eingabe und doppelte Klicks
+    async function handleManualEntryTrigger() {
+        if (currentCategory === null) {
+            showCustomAlert('Kérjük, válasszon ki egy kategóriát, mielőtt bejegyzést adna hozzá!', 'Kategória hiányzik');
+            return;
+        }
+
+        showLoading("Adatok ellenőrzése...");
+        try {
+            const currentEntries = await db.getEntriesForCategory(currentCategory);
+            const isEmpty = currentEntries.length === 0;
+            hideLoading();
+
+            if (isEmpty) {
+                showBockSelectionModal();
+            } else {
+                showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+                    if (manualCode && manualCode.trim() !== '') {
+                        addNewEntry(manualCode.trim(), null, 'manual');
+                    }
+                });
+            }
+        } catch (error) {
+            hideLoading();
+            console.error("Hiba az adatok ellenőrzésekor:", error);
+            showCustomAlert('Hiba történt az adatok ellenőrzésekor.', 'Hiba');
+        }
+    }
+
+    // Zeigt ein benutzerdefiniertes Prompt-Modal an
+    function showCustomPrompt(message, title = 'Bevitel') {
+        return new Promise(async resolve => {
+            const promptModal = document.getElementById('customPromptModal');
+            const okBtn = document.getElementById('customPromptOkBtn');
+            const cancelBtn = document.getElementById('customPromptCancelBtn');
+            const categoryNumberSpan = document.getElementById('promptCategoryNumber');
+            
+            // Update the category number and icon in the modal
+            // Always set to blue
+            const iconColor = '%230056b3';
+            const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
+
+            // Clear previous content and add icon, then "Traverse" label, then number
+            categoryNumberSpan.innerHTML = `
+                <div class="icon-and-text-group">
+                    ${iconSvg}
+                    <div class="traverse-label-in-prompt">Traverse</div>
+                </div>
+                <span class="category-number-display-large">${currentCategory}</span>
+            `;
+            categoryNumberSpan.style.color = 'var(--primary)'; // Always blue
+
+            customPromptInput.value = '';
+            customPromptInput.placeholder = message; // Set the placeholder text
+            promptModal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+            customPromptInput.focus();
+
+            // Static styles for OK button (always blue)
+            okBtn.style.background = 'var(--primary)';
+            okBtn.style.color = 'white';
+            okBtn.style.boxShadow = 'var(--shadow-soft)';
+
+            // Handle Hover and Active states dynamically for OK button
+            okBtn.onmouseover = () => {
+                okBtn.style.background = 'var(--primary-dark)';
+                okBtn.style.boxShadow = 'var(--shadow-medium)';
+            };
+            okBtn.onmouseout = () => {
+                okBtn.style.background = 'var(--primary)';
+                okBtn.style.boxShadow = 'var(--shadow-soft)';
+            };
+            okBtn.onmousedown = () => {
+                okBtn.style.transform = 'scale(0.98)';
+                okBtn.style.boxShadow = 'var(--shadow-active)';
+            };
+            okBtn.onmouseup = () => {
+                okBtn.style.transform = 'scale(1)';
+                okBtn.style.background = 'var(--primary)';
+                okBtn.style.boxShadow = 'var(--shadow-soft)';
+            };
+
+            const processAndResolve = (value) => {
+                if (value && value.includes('.')) {
+                    value = value.split('.')[0];
+                }
+                closeAndResolve(value);
+            };
+
+            const okHandler = () => {
+                processAndResolve(customPromptInput.value);
+            };
+
+            const cancelHandler = () => {
+                closeAndResolve(null);
+            };
+            
+            const inputKeydownHandler = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (customPromptInput.value.trim() !== '') {
+                        processAndResolve(customPromptInput.value);
+                    }
+                }
+            };
+
+            const overlayHandler = (e) => {
+                if (e.target === promptModal) {
+                    closeAndResolve(null);
+                }
+            };
+
+            const closeAndResolve = (value) => {
+                promptModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                okBtn.removeEventListener('click', okHandler);
+                cancelBtn.removeEventListener('click', cancelHandler);
+                promptModal.removeEventListener('click', overlayHandler);
+                customPromptInput.removeEventListener('keydown', inputKeydownHandler);
+                
+                okBtn.onmouseover = null;
+                okBtn.onmouseout = null;
+                okBtn.onmousedown = null;
+                okBtn.onmouseup = null;
+                resolve(value);
+            };
+
+            okBtn.addEventListener('click', okHandler);
+            cancelBtn.addEventListener('click', cancelHandler);
+            promptModal.addEventListener('click', overlayHandler);
+            customPromptInput.addEventListener('keydown', inputKeydownHandler);
+        });
+    }
+
+    // Schließt ein Modal
+    function closeModal(modal) {
+        if (modal === bockSelectionModal) {
+            currentBockModalFocusIndex = -1;
+        }
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        // If the closed modal was the imageModal, also reset its specific state
+        if (modal === imageModal) {
+            currentZoom = 1;
+            currentRotation = 0;
+            translateX = 0;
+            translateY = 0;
+            isDragging = false; // Ensure isDragging is false on close
+            modalImage.style.transform = ''; // Clear all transforms
+            modalImage.style.cursor = 'zoom-in'; // Reset cursor to default for non-zoomed state
+            // Also remove document listeners if they somehow remained active
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+        document.body.classList.remove('modal-open');
+
+        // NEW: Re-focus the last focused category button after closing a modal
+        if (focusedCategoryButton) {
+            setButtonFocus(focusedCategoryButton); // Use setButtonFocus to re-apply focus and scrollIntoView
+        }
+    }
+
+    // QR-Code-Modal anzeigen
+    function showQrCodeModal(code) {
+        if (typeof QRCode === 'undefined') {
+            showCustomAlert('QR-Code-Generierungsbibliothek nem található.', 'Hiba');
+            return;
+        }
+        qrCodeContainer.innerHTML = '';
+        new QRCode(qrCodeContainer, {
+            text: code,
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        qrCodeModal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    // NEU: Funktion zum Öffnen des Suchmodals
+    async function openSearchModal() {
+        searchAuftragInput.value = '';
+        searchResultsContainer.innerHTML = '';
+        searchModal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        searchAuftragInput.focus();
+        
+        showLoading("Minden bejegyzés betöltése kereséshez...");
+        try {
+            allEntriesData = await db.getAllEntries();
+        } catch (error) {
+            console.error("Hiba az összes bejegyzés betöltésekor a kereséshez:", error);
+            showCustomAlert('Hiba történt az adatok betöltésekor a kereséshez.', 'Hiba');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // NEU: Funktion zum Durchführen der Suche
+    function performSearch() {
+        const auftragTerm = searchAuftragInput.value.trim().toLowerCase();
+
+        let filteredResults = allEntriesData.filter(entry => {
+            const matchesAuftrag = auftragTerm === '' || (entry.code && entry.code.toLowerCase().includes(auftragTerm));
+            return matchesAuftrag;
+        });
+
+        const uniqueTraverseNumbers = [...new Set(filteredResults.map(entry => entry.category).filter(cat => typeof cat === 'number' && !isNaN(cat)))].sort((a,b) => a - b);
+
+        renderSearchResults(uniqueTraverseNumbers);
+    }
+
+    // NEU: Funktion zum Anzeigen der Suchergebnisse
+    function renderSearchResults(traverseNumbers) {
+        searchResultsContainer.innerHTML = '';
+
+        if (traverseNumbers.length === 0) {
+            searchResultsContainer.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">Nincs találat.</p>';
+            return;
+        }
+
+        traverseNumbers.forEach(number => {
+            const square = document.createElement('div');
+            square.classList.add('search-result-square');
+            square.textContent = number;
+            square.addEventListener('click', () => {
+                const categoryButton = Array.from(document.querySelectorAll('.grid button')).find(btn => parseInt(btn.querySelector('.category-number-display').textContent) === number);
+                if (categoryButton) {
+                    selectCategory(number, categoryButton);
+                } else {
+                    showCustomAlert(`A ${number} traversa kategória gomb nem található. Kérjük, ellenőrizze, hogy a kategória létezik-e (1-28).`, 'Hiba');
+                }
+                closeModal(searchModal);
+            });
+            searchResultsContainer.appendChild(square);
+        });
+    }
+
+    // NEW: Function to open Bock selection modal
+    async function showBockSelectionModal() {
+        bockButtonsContainer.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            const bockBtn = document.createElement('button');
+            bockBtn.classList.add('bock-button');
+            bockBtn.textContent = i;
+            bockBtn.setAttribute('data-index', i - 1);
+            bockBtn.addEventListener('click', () => handleBockSelection(i));
+            bockButtonsContainer.appendChild(bockBtn);
+        }
+        bockCancelBtn.setAttribute('data-index', 8);
+
+        bockSelectionModal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        
+        setBockModalFocus(0);
+    }
+
+    // NEW: Function to handle Bock number selection
+    async function handleBockSelection(selectedBockNumber) {
+        if (currentCategoryForBockSelection === null || typeof currentCategoryForBockSelection !== 'number' || isNaN(currentCategoryForBockSelection)) {
+            showCustomAlert('Hiba: A Bock-szám mentéséhez szükséges kategória nem azonosítható. Kérjük, először válasszon ki egy traversa gombot, vagy próbálja újra.', 'Hiba');
+            hideLoading();
+            return;
+        }
+
+        showLoading("Bock-szám mentése...");
+        try {
+            await db.saveCategoryMetadata({ categoryNumber: currentCategoryForBockSelection, bockNumber: selectedBockNumber });
+            await updateBockHeader(); // NEW: Update Bock header after selection
+
+            closeModal(bockSelectionModal);
+
+            showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+                if (manualCode && manualCode.trim() !== '') {
+                    addNewEntry(manualCode.trim(), null, 'manual');
+                }
+            });
+
+        } catch (error) {
+            console.error("Hiba a Bock-szám mentésekor vagy a további feldolgozás során:", error);
+            showCustomAlert('Hiba történt a Bock-szám mentésekor vagy a folyamat során: ' + error.message, 'Hiba');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // NEW: Handler for Bock modal cancel button
+    bockCancelBtn.addEventListener('click', () => {
+        closeModal(bockSelectionModal);
+    });
+
+
+    // Haupt-Ereignis-Listener initialisieren
+    manualEntryBtn.addEventListener('click', handleManualEntryTrigger);
+    noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
+
+    // UPDATED: Image viewer button event listeners
+    closeImageModalBtn.addEventListener('click', () => closeModal(imageModal));
+    deleteImageBtn.addEventListener('click', deleteCurrentImage); // This still points to the delete logic
+    rotateLeftBtn.addEventListener('click', rotateLeft);
+    rotateRightBtn.addEventListener('click', rotateRight);
+    zoomInBtn.addEventListener('click', zoomIn);
+    zoomOutBtn.addEventListener('click', zoomOut);
+    downloadImageBtn.addEventListener('click', downloadImage);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    imageUploadInput.addEventListener('change', handleFileSelected);
+
+    // Old image modal navigation buttons now handled by new structure and keyboard events
+    document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
+    document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
+    document.getElementById('qrCodeCloseBtn').addEventListener('click', () => closeModal(qrCodeModal));
+    
+    // Removed old modalImage click listener that toggled 'image-zoomed-in' class
+
+    // The imageModal click listener is now more robust to close on clicks outside the image/controls
+    imageModal.addEventListener('click', (e) => {
+        // Check if the click target is the modal overlay itself OR the image-viewer-container
+        // and NOT the modalImage or any of the buttons within viewer-controls
+        const isClickOnImageOrControl = modalImage.contains(e.target) || e.target.closest('.viewer-controls');
+        if (!isClickOnImageOrControl && (e.target === imageModal || e.target.classList.contains('image-viewer-container'))) {
+            closeModal(imageModal);
+        }
+    });
+
+    noteModal.addEventListener('click', (e) => {
+        if (e.target === noteModal) {
+            closeModal(noteModal); document.body.classList.remove('modal-open');
+        }
+    });
+    qrCodeModal.addEventListener('click', (e) => {
+        if (e.target === qrCodeModal) {
+            closeModal(qrCodeModal);
+        }
+    });
+    searchModal.addEventListener('click', (e) => {
+        if (e.target === searchModal) {
+            closeModal(searchModal);
+        }
+    });
+    bockSelectionModal.addEventListener('click', (e) => {
+        if (e.target === bockSelectionModal) {
+            closeModal(bockSelectionModal);
+        }
+    });
+
+    // NEW: Keyboard navigation for image modal
+    imageModal.addEventListener('keydown', (e) => {
+        if (imageModal.style.display === 'flex') {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                showPrevImage();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                showNextImage();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal(imageModal);
+            } else if (e.key === '+' || e.key === '=') { // Zoom In
+                e.preventDefault();
+                zoomIn();
+            } else if (e.key === '-' || e.key === '_') { // Zoom Out
+                e.preventDefault();
+                zoomOut();
+            } else if (e.key === 'r' || e.key === 'R') { // Rotate Right
+                e.preventDefault();
+                rotateRight();
+            } else if (e.key === 'l' || e.key === 'L') { // Rotate Left
+                e.preventDefault();
+                rotateLeft();
+            } else if (e.key === 'f' || e.key === 'F') { // Fullscreen
+                e.preventDefault();
+                toggleFullscreen();
+            } else if (e.key === 'd' || e.key === 'D') { // Download
+                e.preventDefault();
+                downloadImage();
+            }
+        }
+    });
+
+    // Kombinált billentyűzetkezelő a window-ra
+    window.addEventListener('keydown', async (e) => {
+        // CHART BUTTON TOGGLE WITH CTRL + D
+        if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault(); // Megakadályozza az alapértelmezett böngésző viselkedését (pl. könyvjelzőzés)
+            if (chartButtonContainer) {
+                chartButtonContainer.style.display = chartButtonContainer.style.display === 'none' ? 'flex' : 'none';
+            }
+            return; // Visszatérés a Ctrl+D kezelése után
+        }
+
+        // 1. Modális ablakok bezárása Esc billentyűvel
+        if (e.key === 'Escape') {
+            if (imageModal.style.display === 'flex') {
+                closeModal(imageModal);
+                return;
+            } else if (noteModal.style.display === 'flex') {
+                closeModal(noteModal);
+                return;
+            } else if (customPromptModal.style.display === 'flex') {
+                closeModal(customPromptModal);
+                return;
+            } else if (qrCodeModal.style.display === 'flex') {
+                closeModal(qrCodeModal);
+                return;
+            } else if (searchModal.style.display === 'flex') {
+                closeModal(searchModal);
+                return;
+            } else if (bockSelectionModal.style.display === 'flex') {
+                closeModal(bockSelectionModal);
+                return;
+            }
+            else if (document.getElementById('customAlertModal') && document.getElementById('customAlertModal').style.display === 'flex') {
+                document.getElementById('customAlertModal').querySelector('#customAlertCloseBtn').click();
+                return;
+            }
+        }
+
+        // Ellenőrizzük, hogy nyitva van-e valamilyen modális ablak, kivéve a customPromptInput-ot, ha abban gépelünk.
+        const isAnyModalOpenAndNotPromptInputFocused = (
+            imageModal.style.display === 'flex' ||
+            noteModal.style.display === 'flex' ||
+            qrCodeModal.style.display === 'flex' ||
+            searchModal.style.display === 'flex' ||
+            bockSelectionModal.style.display === 'flex' ||
+            (document.getElementById('customAlertModal') && document.getElementById('customAlertModal').style.display === 'flex') ||
+            (customPromptModal.style.display === 'flex' && document.activeElement !== customPromptInput)
+        );
+
+        // Ha nyitva van egy modális ablak (és nem a prompt inputban gépelünk), ne dolgozzunk fel további billentyűket.
+        if (isAnyModalOpenAndNotPromptInputFocused) {
+            if (searchModal.style.display === 'flex' && e.key === 'Enter' && document.activeElement !== searchAuftragInput) {
+                e.preventDefault();
+            }
+            return;
+        }
+
+        if (document.activeElement === customPromptInput || document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        // 2. Enter billentyű kezelése fókuszált kategóriagombon
+        if (e.key === 'Enter' && focusedCategoryButton) {
+            e.preventDefault();
+            const focusedCategoryNum = parseInt(focusedCategoryButton.querySelector('.category-number-display').textContent);
+            // Ellenőrizzük, hogy a jelenlegi kategóriában vannak-e bejegyzések
+            const currentEntries = await db.getEntriesForCategory(focusedCategoryNum);
+            const hasData = currentEntries.length > 0;
+
+            if (currentCategory === focusedCategoryNum) {
+                if (hasData) {
+                    // Második Enter egy adatot tartalmazó kategórián: Szkennelő prompt megnyitása
+                    showCustomPrompt('Adja meg a feladatot', 'Kézi bevitel').then(manualCode => {
+                        if (manualCode && manualCode.trim() !== '') {
+                            addNewEntry(manualCode.trim(), null, 'manual');
+                        }
+                    });
+                } else {
+                    // Második Enter egy üres kategórián: Bock kiválasztás megnyitása
+                    showBockSelectionModal();
+                }
+            } else {
+                // Első Enter, vagy új kategória kiválasztása: Csak kiválasztás
+                await selectCategory(focusedCategoryNum, focusedCategoryButton);
+            }
+            return;
+        }
+
+        // 3. Nyilak navigálása a kategóriagombok között
+        if (e.key.startsWith('Arrow')) {
+            e.preventDefault();
+            const allCategoryButtons = Array.from(document.querySelectorAll('.grid button'));
+            let currentIdx = -1;
+
+            if (focusedCategoryButton) {
+                currentIdx = allCategoryButtons.indexOf(focusedCategoryButton);
+            } else if (currentCategory) {
+                const selectedButton = allCategoryButtons.find(btn => parseInt(btn.querySelector('.category-number-display').textContent) === currentCategory);
+                if (selectedButton) {
+                    currentIdx = allCategoryButtons.indexOf(selectedButton);
+                }
+            }
+            
+            if (currentIdx === -1) {
+                setButtonFocus(allCategoryButtons[0]);
+                return;
+            }
+
+            let nextIdx = currentIdx;
+
+            if (e.key === 'ArrowLeft') {
+                nextIdx = (currentIdx - 1 + TOTAL_BUTTONS) % TOTAL_BUTTONS;
+            } else if (e.key === 'ArrowRight') {
+                nextIdx = (currentIdx + 1) % TOTAL_BUTTONS;
+            } else if (e.key === 'ArrowUp') {
+                let colsToUse = (currentIdx < GRID1_SIZE) ? GRID1_COLS : GRID2_COLS;
+                nextIdx = currentIdx - colsToUse;
+                if (nextIdx < 0) {
+                    if (currentIdx < GRID1_SIZE) {
+                        nextIdx = TOTAL_BUTTONS - 1;
+                    } else {
+                        nextIdx = GRID1_SIZE - 1;
+                    }
+                }
+            } else if (e.key === 'ArrowDown') {
+                let colsToUse = (currentIdx < GRID1_SIZE) ? GRID1_COLS : GRID2_COLS;
+                nextIdx = currentIdx + colsToUse;
+                if (nextIdx >= TOTAL_BUTTONS) {
+                    if (currentIdx >= GRID1_SIZE) {
+                        nextIdx = 0;
+                    } else {
+                        nextIdx = GRID1_SIZE;
+                    }
+                }
+            }
+
+            nextIdx = Math.max(0, Math.min(nextIdx, TOTAL_BUTTONS - 1));
+            
+            if (allCategoryButtons[nextIdx]) {
+                setButtonFocus(allCategoryButtons[nextIdx]);
+            }
+            return;
+        }
+
+        if (focusedCategoryButton && e.key.length === 1) {
+            e.preventDefault();
+            return;
+        }
+    });
+
+    // Ereignis-Handler für den Kategorie törlése-Button
+    clearCategoryBtn.addEventListener('click', async () => {
+        const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
+        const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
+        
+        const result = await showCustomConfirm(`Biztosan törölni szeretné ${dummyEntryForCheckbox ? 'az összes FA/NA bejegyzést' : 'az összes bejegyzést'} ebből a kategóriából?`, 'Megerősítés', dummyEntryForCheckbox);
+        
+        if (result.confirmed) {
+            showLoading("Kategória törlése...");
+            try {
+                if (result.exportPdf) {
+                    for (const entry of entries) {
+                        await generatePdfForEntry(entry);
+                    }
+                }
+                
+                await db.clearCategory(currentCategory);
+                await db.saveCategoryMetadata({ categoryNumber: currentCategory, bockNumber: null });
+                entries = [];
+                renderTable();
+                await updateCategoryButtonColors();
+                updateTraverseHeader();
+                await updateBockHeader(); // NEW: Update Bock header after clearing category
+                updateTableHeaderColors(); // NEW: Update table header colors
+
+                const count = await db.getEntryCountForCategory(currentCategory);
+                if (count === 0) {
+                    categoryLabelLeft.style.color = 'var(--muted)';
+                    updateControlButtonsColor(true);
+                }
+                await updateGlobalHeaderIcons();
+                updateHeaderAndControls();
+
+            } catch (error) {
+                console.error("Fehler beim Löschen oder Exportieren.", error);
+                showCustomAlert('Beim Lölés vagy exportálás során hiba történt.', 'Hiba');
+            } finally {
+                hideLoading();
+            }
+        }
+    });
+
+    // NEU: Ereignis-Handler für den Suchbutton
+    searchBtn.addEventListener('click', openSearchModal);
+
+    // NEU: Keydown-Handler für die Such-Inputs im Suchmodal
+    searchAuftragInput.addEventListener('input', () => {
+        performSearch();
+    });
+
+    // NEU: Chart button event listener (dummy function for now)
+    chartBtn.addEventListener('click', openChartModal);
+
+
+    // Warnung vor dem Verlassen der Seite (wegen IndexedDB)
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // NEW: Function to open chart modal and populate data
+    async function openChartModal() {
+        if (currentCategory === null) {
+            showCustomAlert('Bitte wählen Sie eine Kategorie aus, um das Diagramm anzuzeigen!', 'Kategorie fehlt');
+            return;
+        }
+
+        showLoading("Diagrammdaten werden geladen...");
+        try {
+            const currentEntriesForChart = await db.getEntriesForCategory(currentCategory);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset time for date comparison
+
+            let sunNonFaNaCount = 0;
+            let sunFaNaCount = 0;
+            let moonNonFaNaCount = 0;
+            let moonFaNaCount = 0;
+
+            currentEntriesForChart.forEach(entry => {
+                const entryDate = new Date(entry.date);
+                const entryHour = entryDate.getHours();
+                const isFaNa = entry.code && (entry.code.startsWith('FA') || entry.code.startsWith('NA'));
+
+                if (entryHour < 14) { // Day shift
+                    if (isFaNa) {
+                        sunFaNaCount++;
+                    } else {
+                        sunNonFaNaCount++;
+                    }
+                } else { // Night shift
+                    if (isFaNa) {
+                        moonFaNaCount++;
+                    } else {
+                        moonNonFaNaCount++;
+                    }
+                }
+            });
+
+            document.getElementById('chartDateCell').textContent = today.toLocaleDateString('de-DE'); // Changed to de-DE
+            document.getElementById('chartSunNonFaNa').textContent = sunNonFaNaCount;
+            document.getElementById('chartSunFaNa').textContent = sunFaNaCount;
+            document.getElementById('chartMoonNonFaNa').textContent = moonNonFaNaCount;
+            document.getElementById('chartMoonFaNa').textContent = moonFaNaCount;
+
+            document.getElementById('chartModal').style.display = 'flex';
+            document.body.classList.add('modal-open');
+            document.getElementById('chartCloseBtn').focus();
+
+        } catch (error) {
+            console.error("Fehler beim Laden der Diagrammdaten:", error);
+            showCustomAlert('Beim Laden der Diagrammdaten ist ein Fehler aufgetreten.', 'Fehler');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    document.getElementById('chartCloseBtn').addEventListener('click', () => closeModal(document.getElementById('chartModal')));
+    document.getElementById('chartModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('chartModal')) {
+            closeModal(document.getElementById('chartModal'));
+        }
+    });
+
+    // Aktualisiert die Farben der Kategorie-Buttons beim Laden der Seite
+    window.onload = async function() {
+        await updateCategoryButtonColors();
+        const firstCategoryButton = document.querySelector('#categoryGrid1 button:first-child');
+        if (firstCategoryButton) {
+            await selectCategory(parseInt(firstCategoryButton.querySelector('.category-number-display').textContent), firstCategoryButton);
+        }
+        await updateGlobalHeaderIcons();
+        await updateBockHeader(); // NEW: Update Bock header on initial load
+        updateTableHeaderColors(); // NEW: Update table header colors on initial load
+    };
+
+})();
+</script>
