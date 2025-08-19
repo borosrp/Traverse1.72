@@ -76,6 +76,7 @@
         }
         #categoryGrid2 {
             background: #70A4D5; /* Rasterhintergrund beibehalten, aber Schaltflächenfarbe überschreibt jetzt */
+            margin-bottom: 5px; /* CSÖKKENTVE 10px-ről 5px-re */
         }
         /* NEU: Sehr hellblau für das Raster der Kategorien 1-16 */
         #categoryGrid1 {
@@ -449,7 +450,7 @@
 
         .controls button i {
             margin: 0 4px;
-            font-size: 1.458em; /* CSÖKKENTVE 1.62em-ről 1.458em-re (10% csökkentés) */
+            font-size: 1.3122em; /* CSÖKKENTVE 1.458em-ről 1.3122em-re (10% csökkentés) */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
@@ -2917,11 +2918,14 @@ const db = (() => {
             showLoading("Eintrag wird gelöscht...");
             try {
                 if (result.exportPdf) {
-                    await generatePdfForEntry(entryToDelete); // Generate PDF only for the single deleted entry
+                    for (const entry of entries) {
+                        await generatePdfForEntry(entry);
+                    }
                 }
                 
-                await db.deleteEntry(id);
-                entries = entries.filter(e => e.id !== id);
+                await db.clearCategory(currentCategory);
+                await db.saveCategoryMetadata({ categoryNumber: currentCategory, bockNumber: null });
+                entries = [];
                 renderTable();
                 await updateCategoryButtonColors();
                 updateTraverseHeader();
