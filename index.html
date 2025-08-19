@@ -89,9 +89,9 @@
 
         .grid button {
             position: relative;
-            padding: 0.781em 0.391em; /* 10%-kal csökkentve */
-            min-height: 2.52em; /* 10%-kal csökkentve */
-            font-size: 1.296em; /* 10%-kal csökkentve */
+            padding: 0.82em 0.41em; /* 5%-kal növelve */
+            min-height: 2.65em; /* 5%-kal növelve */
+            font-size: 1.36em; /* 5%-kal növelve */
             border-radius: 6px;
             border: 1px solid var(--text);
             cursor: pointer;
@@ -575,8 +575,8 @@
             font-weight: 700;
             /* ÄNDERUNG: Überschrift Textfarbe auf blau */
             color: var(--muted); /* Changed to muted by default */
-            font-size: 0.81em; /* 10%-kal csökkentve */
-            padding: 14px 11px; /* 10%-kal csökkentve */
+            font-size: 0.85em; /* 5%-kal növelve */
+            padding: 15px 12px; /* 5%-kal növelve */
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-shadow: none;
@@ -3158,7 +3158,7 @@ const db = (() => {
     
         } catch (e) {
             if (e.name === 'ConstraintError') {
-                showCustomAlert(`Ez az azonosító ("${newEntry.code}") már létezik ebben a kategóriában (${newEntry.category}). Kérjük, használjon egyedi azonosítót.`, 'Duplikált bejegyzés');
+                showCustomAlert(`Ez az azonosító ("${code}") már létezik ebben a kategóriában (${currentCategory}). Kérjük, használjon egyedi azonosítót.`, 'Duplikált bejegyzés');
             } else {
                 console.error('Hiba a helyi mentéskor:', e);
                 showCustomAlert('Hiba a helyi mentéskor! Az adatok nem lettek elmentve.', 'Hiba');
