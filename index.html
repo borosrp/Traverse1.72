@@ -449,7 +449,7 @@
 
         .controls button i {
             margin: 0 4px;
-            font-size: 1.62em; /* CSÖKKENTVE 1.8em-ről 1.62em-re (10% csökkentés) */
+            font-size: 1.458em; /* CSÖKKENTVE 1.62em-ről 1.458em-re (10% csökkentés) */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
@@ -2605,7 +2605,7 @@ const db = (() => {
                 }
             }
         } catch (error) {
-            console.error("Fehler beim Löschen des Bildes:", error);
+                console.error("Fehler beim Löschen des Bildes:", error);
             showCustomAlert('Beim Löschen des Bildes ist ein Fehler aufgetreten.', 'Fehler');
         } finally {
             hideLoading();
@@ -2938,7 +2938,7 @@ const db = (() => {
 
             } catch (error) {
                 console.error("Fehler beim Löschen oder Exportieren.", error);
-                showCustomAlert('Beim Löschen oder Exportieren ist ein Fehler aufgetreten.', 'Fehler');
+                showCustomAlert('Beim Lölés vagy exportálás során hiba történt.', 'Hiba');
             } finally {
                 hideLoading();
             }
