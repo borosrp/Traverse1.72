@@ -60,18 +60,16 @@
         #main-scrollable-area {
             flex: 1;
             overflow-y: auto;
-            /* ÁTTERVEZÉS: Felső margó csökkentve, hogy több tartalom látszódjon */
-            padding: 10px 0 138px; 
+            padding: 15px 0 138px; /* Vergrößerter unterer Rand für die untere Steuerleiste - CSÖKKENTVE 140px-ről 138px-re */
             box-sizing: border-box;
         }
 
         .grid {
             display: grid;
-            /* ÁTTERVEZÉS: Kompaktabb rács a helytakarékosság érdekében */
-            gap: 8px;
-            padding: 10px;
+            gap: 15px;
             margin-bottom: 10px;
             background: var(--card-bg);
+            padding: 20px;
             border-radius: 8px;
             box-shadow: var(--shadow-soft);
             border: 1px solid var(--text);
@@ -91,10 +89,11 @@
 
         .grid button {
             position: relative;
-            /* ÁTTERVEZÉS: Kisebb gombok a kompaktabb megjelenésért */
-            padding: 0.6em 0.3em;
-            min-height: 2.5em;
-            font-size: 1.2em; /* Eredeti: 1.44em */
+            /* UPDATED: Reverted padding to original compact values */
+            padding: 0.868em 0.434em; /* Scaled from 20px 10px based on button's font-size */
+            /* UPDATED: Reduced min-height to be more compact */
+            min-height: 2.8em; /* Adjusted to be more compact, but still allow for content */
+            font-size: 1.44em; /* Base font size for the button content */
             border-radius: 6px;
             border: 1px solid var(--text);
             cursor: pointer;
@@ -122,15 +121,19 @@
 
         .grid button .time-icon {
             position: absolute;
+            /* UPDATED: Pushed closer to the corner */
             bottom: 0.05em; 
             right: 0.05em; 
+            /* UPDATED: Slightly reduced font-size */
             font-size: 0.7em;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* 3D-Effekt */
         }
         .grid button .day-letter {
             position: absolute;
+            /* UPDATED: Pushed closer to the corner */
             bottom: 0.05em; 
             left: 0.05em; 
+            /* UPDATED: Slightly reduced font-size */
             font-size: 0.7em;
             font-weight: bold;
             color: white;
@@ -182,6 +185,8 @@
         }
 
         .grid button.active {
+            /* Schriftart wird von aktiven Klassen verwaltet */
+            /* Standardmäßiger aktiver Rahmen/Schatten, spezifischere Regeln überschreiben bei Bedarf */
             border: 4px solid var(--muted); /* Standardmäßiger grauer Rahmen für aktiv */
             box-shadow: var(--shadow-medium); /* Standardmäßiger mittlerer Schatten für aktiv */
             animation-duration: 3s; /* Langsamere Animation für alle aktiven Schaltflächen */
@@ -214,8 +219,10 @@
         /* NEUE REGEL: Icon in der oberen linken Ecke der Schaltfläche (L-Buchstabe) */
         .grid button .fa-na-icon { /* Klasse für präzisere Beschreibung umbenannt */
             position: absolute;
+            /* UPDATED: Pushed closer to the corner */
             top: 0.05em; 
             left: 0.05em; 
+            /* UPDATED: Slightly reduced width/height */
             width: 1em; /* Größe einstellen */
             height: 1em; /* Größe einstellen */
             z-index: 10; /* Damit es über anderen Elementen liegt */
@@ -223,8 +230,10 @@
         /* NEU: Icon in der oberen linken Ecke der Schaltfläche (bei Nicht-FA/NA-Daten) */
         .grid button .non-fa-na-icon {
             position: absolute;
+            /* UPDATED: Pushed closer to the corner */
             top: 0.05em; 
             left: 0.05em; 
+            /* UPDATED: Slightly reduced width/height */
             width: 1em; /* Größe einstellen */
             height: 1em; /* Größe einstellen */
             z-index: 10; /* Damit es über anderen Elementen liegt */
@@ -233,13 +242,16 @@
         /* NEW: Bock number display on category buttons */
         .grid button .bock-number-display {
             position: absolute;
+            /* UPDATED: Pushed closer to the corner */
             top: 0.05em; 
             right: 0.05em; 
             background-color: var(--primary); /* Blue background */
             color: white; /* White text */
+            /* UPDATED: Slightly reduced font-size */
             font-size: 0.5em; /* Smaller font size */
             font-weight: bold;
             border-radius: 50%; /* Make it a circle */
+            /* UPDATED: Adjusted width/height relative to its new font-size */
             width: 1.8em; /* Adjusted to be relative to its own font-size */
             height: 1.8em; /* Adjusted to be relative to its own font-size */
             display: flex;
@@ -247,6 +259,7 @@
             align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             z-index: 15; /* Higher than other icons */
+            /* Default no border and no animation */
             border: 1px solid transparent;
             animation: none;
         }
@@ -267,20 +280,29 @@
         }
 
 
+        /* UPDATED: Replaced old SVG with new one for header icon */
         .header-traverse-icon {
             width: 1.5em; /* Die Breite des Icons - gleich der Höhe der Zahl */
             height: 1.5em; /* Die Höhe des Icons - gleich der Höhe der Zahl */
             vertical-align: middle; /* Vertikale Ausrichtung zum Text */
+            /* margin-right: 5px; */ /* Removed margin to center the icon */
             display: inline-block; /* Wichtig, dass es inline-block ist wegen der vertikalen Ausrichtung */
         }
 
+        /* UPDATED: Replaced old SVG with new one for category label icon */
         .category-label-icon {
+            /* Die .controls .category-display-label font-size-a 2.2em, ehhez igazítjuk */
             width: 1em; /* Die Breite des Icons an die Höhe der Zahl angepasst */
             height: 1em; /* Die Höhe des Icons an die Höhe der Zahl angepasst */
             vertical-align: middle; /* Vertikale Ausrichtung zum Text */
             margin-right: 10px; /* Abstand zur Zahl */
             display: inline-block; /* Wichtig, dass es inline-block ist wegen der vertikalen Ausrichtung */
         }
+
+        /* MODIFIED: Removed font-size increase for .has-note-blinking .category-number-display */
+        /* @keyframes blink-red-white-text removed, replaced by blink-white-red-text */
+        /* The previous blink-red-white-text animation is now replaced by blink-white-red-text */
+        /* The actual pulsing for the traverse number's border and text color is handled below */
 
         /* NEW: Animation for text color (white to red) */
         @keyframes blink-white-red-text {
@@ -295,13 +317,18 @@
             100% { border-color: #ffffff; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
         }
 
+        /* MODIFIED: Styles for traverse number when it has a note (blinking white-red) */
         .has-note-blinking .category-number-display {
             font-weight: bold; /* Ensure the number is bold */
+            
+            /* Add border to create the "frame" effect */
             border: 1px solid #ffffff; /* Initial white border */
             padding: 0.0868em 0.217em; /* Scaled from 2px 5px */
             border-radius: 4px; /* Slightly rounded corners for the frame */
             display: inline-block; /* Ensure padding and border apply correctly */
             box-sizing: border-box; /* Include padding and border in element's total width and height */
+
+            /* Apply both animations */
             animation-name: blink-white-red-text, pulse-white-red-border;
             animation-duration: 1.5s, 1.5s;
             animation-iteration-count: infinite, infinite;
@@ -316,6 +343,7 @@
             left: 0;
             right: 0; /* Geändert von width: 100% auf right: 0 */
             z-index: 1000;
+            /* Bleibt auskommentiert, JS steuert die Sichtbarkeit */
             box-sizing: border-box;
             padding: 0 15px; /* Horizontaler Abstand hinzugefügt, um sich dem Body anzupassen */
             background: transparent; /* Transparent geändert, um die Stilgebung des inneren Divs zu ermöglichen */
@@ -366,9 +394,11 @@
             justify-content: center; /* Center content horizontally */
         }
 
+        /* NEW: Style for the traverse number within the category-display-label */
         .controls .category-display-label .traverse-number-in-controls {
             font-size: 1.5em; /* Make the number larger relative to its parent (2.2em * 1.5 = 3.3em) */
             font-weight: bold;
+            /* REMOVED: color: var(--primary); */ /* This will now inherit from the parent based on data presence */
             margin-left: 0.2em; /* Add a small margin to separate from the icon/text group */
         }
 
@@ -445,6 +475,7 @@
             box-shadow: var(--shadow-active);
         }
 
+        /* NEU: Suchtaste Styles */
         #searchBtn {
             padding: 14px 22px; /* Gleiche Polsterung wie bei anderen Tasten */
             font-size: 1.1em;
@@ -468,6 +499,8 @@
             box-shadow: var(--shadow-active);
         }
 
+
+        /* NEW: Chart button container */
         .chart-button-container {
             display: flex;
             flex-direction: column;
@@ -503,8 +536,7 @@
 
 
         #listSection {
-            /* ÁTTERVEZÉS: Kisebb felső margó a táblázat felett */
-            margin-top: 15px;
+            margin-top: 30px;
             display: block;
         }
 
@@ -512,8 +544,7 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            /* ÁTTERVEZÉS: Kisebb felső margó */
-            margin-top: 10px;
+            margin-top: 20px;
             background: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
@@ -523,24 +554,27 @@
         }
         th, td {
             border-bottom: 1px solid var(--border-color);
-            /* ÁTTERVEZÉS: Kompaktabb cellák a több sor megjelenítéséért */
-            padding: 8px 10px;
+            padding: 15px 12px;
             text-align: center;
             vertical-align: middle;
             color: var(--text);
+            /* REMOVED: text-overflow: ellipsis; from td */
             white-space: normal;
             word-wrap: break-word;
+            /* ADDED: overflow hidden to ensure content stays within cell */
             overflow: hidden;
         }
         th {
             background: #f0f0f0;
             font-weight: 700;
+            /* ÄNDERUNG: Überschrift Textfarbe auf blau */
             color: var(--muted); /* Changed to muted by default */
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-shadow: none;
         }
+        /* NEW: Dynamic color for table headers based on data presence */
         table.has-data-selected th {
             color: var(--primary); /* Blue when data is present */
         }
@@ -554,41 +588,41 @@
         .auftrag-colored {
             color: var(--primary);
             font-weight: bold;
-            /* ÁTTERVEZÉS: Kisebb betűméret a kompaktabb sorokért */
-            font-size: 1.1em;
+            font-size: 1.3em;
         }
 
         .auftrag-manual-bold {
             color: var(--text);
             font-weight: bold;
-            /* ÁTTERVEZÉS: Kisebb betűméret a kompaktabb sorokért */
-            font-size: 1.1em;
+            font-size: 1.3em;
         }
         
+        /* NEW: Style for the clickable auftrag text */
         .auftrag-clickable {
             cursor: pointer;
-            display: block; 
-            width: 100%; 
-            box-sizing: border-box; 
-            padding: 5px; 
-            border-radius: 4px; 
-            transition: background-color 0.1s ease, transform 0.1s ease; 
-            word-break: break-all; 
+            display: block; /* Changed from inline-block to block */
+            width: 100%; /* Ensure it takes full width of its parent td */
+            box-sizing: border-box; /* Include padding in width calculation */
+            padding: 5px; /* Adds a bit of clickable area around the text */
+            border-radius: 4px; /* Slight roundness */
+            transition: background-color 0.1s ease, transform 0.1s ease; /* Added transform to transition */
+            word-break: break-all; /* Force breaks even within long words */
         }
         .auftrag-clickable:hover {
-            background-color: rgba(0, 0, 0, 0.05); 
-            transform: scale(1.03); 
+            background-color: rgba(0, 0, 0, 0.05); /* Subtle hover effect */
+            transform: scale(1.03); /* Slightly scale up on hover */
         }
         .auftrag-clickable:active {
-            transform: scale(0.97); 
+            transform: scale(0.97); /* Slightly scale down on click */
         }
 
 
+        /* NEW: Style for the traverse number in the table rows */
         .traverse-row-number {
-            color: var(--primary); 
-            font-weight: bold; 
-            /* ÁTTERVEZÉS: Kisebb betűméret a kompaktabb sorokért */
-            font-size: 1.3em; 
+            color: var(--primary); /* Blue color */
+            font-weight: bold; /* Bold style */
+            font-size: 1.5em; /* Reverted to 1.5em */
+            /* margin-left: 5px; */ /* Removed margin as it's now the only content */
         }
 
         button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
@@ -597,8 +631,7 @@
             color: var(--danger);
             border: 1px solid #f5c6cb;
             border-radius: 5px;
-            /* ÁTTERVEZÉS: Kisebb gomb */
-            padding: 6px;
+            padding: 8px 8px;
             font-size: 0.85em;
             font-weight: bold;
             transition: all 0.2s ease;
@@ -628,8 +661,7 @@
             margin: 0 auto;
             border-radius: 6px;
             padding: 8px 8px;
-            /* ÁTTERVEZÉS: Kisebb ikon a kompaktabb sorokért */
-            font-size: 1.3em;
+            font-size: 1.5em;
         }
         .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
 
@@ -668,9 +700,8 @@
             margin-bottom: 0;
         }
         .photoRow img {
-            /* ÁTTERVEZÉS: Kisebb képek a helytakarékosság érdekében */
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 5px;
             border: 1px solid var(--border-color);
             cursor: pointer;
@@ -843,6 +874,7 @@
             background: transparent; /* Remove background */
             cursor: grab; /* Cursor for panning */
             transition: transform 0.1s ease-out; /* Smooth transitions for zoom/pan/rotate */
+            /* Transform properties will be set by JS */
             transform-origin: center center; /* Zoom/rotate from center */
             touch-action: none; /* Disable default touch actions like pinch-zoom */
         }
@@ -935,10 +967,12 @@
             object-fit: contain; /* Ensure it still fits within the screen */
         }
 
+        /* Hide native scrollbars when modal is open and handling custom scrolling */
         body.modal-open {
             overflow: hidden;
         }
 
+        /* Loading overlay style, ensure it's on top of modals */
         #loadingOverlay {
             position: fixed;
             top: 0;
@@ -1057,6 +1091,7 @@
         .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
         .note-modal-content button:active { transform: scale(0.98); }
 
+        /* MODIFIED: Styles for the prompt modal header elements */
         .modal-category-number {
             font-size: 6em; /* Base size for the entire group */
             font-weight: 700;
@@ -1066,6 +1101,7 @@
             flex-direction: row; /* Keep them side-by-side */
             align-items: center; /* Vertically align the two main blocks */
             justify-content: center;
+            /* REMOVED: gap: 1em; */ /* Remove explicit gap to make them "rögtön mellettük" */
         }
         .modal-category-number .icon-and-text-group {
             display: flex;
@@ -1077,6 +1113,7 @@
         .modal-category-number .category-label-icon {
             width: 0.9em; /* Relative to .modal-category-number's font-size */
             height: 0.9em; /* Relative to .modal-category-number's font-size */
+            /* No specific margin-bottom needed here, gap handles it */
         }
         .modal-category-number .traverse-label-in-prompt {
             font-size: 0.25em; /* Relative to .modal-category-number's font-size */
@@ -1084,6 +1121,7 @@
             color: var(--primary);
         }
         .modal-category-number .category-number-display-large {
+            /* This will be the main number. Its size should be adjusted to match the combined height of the icon and text group. */
             font-size: 1.25em; /* Relative to .modal-category-number's font-size */
             font-weight: 700;
             color: var(--primary);
@@ -1104,6 +1142,26 @@
             gap: 20px;
             background-color: white !important;
         }
+        /* REMOVED: Old traverse-modal-icon and traverse-modal-label styles as they are no longer used */
+        /*
+        #customPromptModal .traverse-modal-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: -10px;
+        }
+        #customPromptModal .traverse-modal-icon {
+            width: 120px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            fill: var(--primary);
+        }
+        */
+
 
         #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2, #searchModal h2 {
             display: none;
@@ -1112,6 +1170,7 @@
             display: none;
         }
 
+        /* MODIFIED: Centering for input fields */
         #customPromptInput, #searchAuftragInput {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -1136,6 +1195,7 @@
             background: #bbbbbb !important;
         }
 
+        /* Search Results Container for squares */
         #searchResultsContainer {
             width: 100%;
             margin-top: 20px;
@@ -1171,12 +1231,14 @@
             box-shadow: var(--shadow-medium);
         }
 
+        /* NEW: Bock selection modal styles */
         #bockSelectionModal .note-modal-content {
             max-width: 456px;
             align-items: center;
             gap: 20px;
             background-color: white !important;
         }
+        /* NEW: Style for the H-shaped icon in the bock selection modal */
         #bockSelectionModal .bock-modal-icon {
             width: 120px; /* Doubled width */
             height: 60px; /* Adjusted height to maintain 2:1 aspect ratio of the new SVG content */
@@ -1187,6 +1249,7 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
             fill: var(--primary); /* Always blue, as requested */
         }
+        /* NEW: Style for the Rüststation label in the bock selection modal */
         #bockSelectionModal .bock-modal-label {
             font-size: 1.2em;
             font-weight: bold;
@@ -1213,6 +1276,7 @@
             transform: scale(0.96);
             box-shadow: var(--shadow-active);
         }
+        /* NEW: Focus style for bock buttons */
         #bockSelectionModal .bock-button:focus {
             outline: none;
             border: 3px solid var(--primary-dark);
@@ -1220,6 +1284,7 @@
         }
         #bockCancelBtn {
             margin-top: 20px;
+            /* NEW: Style for the 'X' button */
             padding: 10px 15px;
             font-size: 1.5em;
             background: #ccc;
@@ -1240,17 +1305,21 @@
             box-shadow: var(--shadow-active);
         }
 
+        /* NEW: Style for the Bock icon in the table header */
         .bock-header-icon {
             width: 1.8em; /* Adjusted to be 20% larger than 1.5em */
             height: 1.8em; /* Adjusted to be 20% larger than 1.5em */
             vertical-align: middle;
+            /* Removed margin-right: 5px; as the number next to it is gone */
         }
+        /* NEW: Style for bock numbers in table rows */
         .bock-row-number {
             font-size: 1.2em; /* 10% larger than default td text (1em) */
             font-weight: bold;
             color: var(--primary); /* Optional: make it blue like the header icon */
         }
 
+        /* NEW: Chart table header icon styling */
         .chart-header-icon {
             width: 2.4em; /* Doubled from 1.2em */
             height: 2.4em; /* Doubled from 1.2em */
@@ -1360,9 +1429,12 @@
 
     <div id="customPromptModal" class="modal-overlay">
         <div class="note-modal-content">
+            <!-- The category number span now also contains the icon and the "Traverse" label -->
             <span id="promptCategoryNumber" class="modal-category-number">
                 <div class="icon-and-text-group">
+                    <!-- Traverse Icon -->
                     <img id="promptTraverseIcon" src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="%230056b3"/%3E%3Crect x="10" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="30" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="55" y="25" width="15" height="15" fill="%230056b3"/%3E%3Crect x="75" y="25" width="15" height="15" fill="%230056b3"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">
+                    <!-- Traverse Label -->
                     <div class="traverse-label-in-prompt">Traverse</div>
                 </div>
                 <span class="category-number-display-large"></span>
@@ -1377,6 +1449,7 @@
         </div>
     </div>
 
+    <!-- QR Code Modal -->
     <div id="qrCodeModal" class="modal-overlay">
         <div class="note-modal-content">
             <h2>QR-Code</h2>
@@ -1385,6 +1458,7 @@
         </div>
     </div>
 
+    <!-- NEU: Search Modal -->
     <div id="searchModal" class="modal-overlay">
         <div class="note-modal-content">
             <h2>Suche</h2>
@@ -1393,8 +1467,10 @@
         </div>
     </div>
     
+    <!-- NEW: Bock Selection Modal -->
     <div id="bockSelectionModal" class="modal-overlay">
         <div class="note-modal-content">
+            <!-- H-shaped icon at the top -->
             <svg class="bock-modal-icon" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
                 <rect x="20" y="10" width="36" height="60" fill="#0056b3"/>
                 <rect x="144" y="10" width="36" height="60" fill="#0056b3"/>
@@ -1404,6 +1480,7 @@
             </svg>
             <span class="bock-modal-label">Hub- & Senkstation</span> <!-- Changed to Hub- & Senkstation -->
             <div id="bockButtonsContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%;">
+                <!-- Buttons 1-8 will be added here by JS -->
             </div>
             <button id="bockCancelBtn" title="Schließen"><i class="fas fa-times"></i></button>
         </div>
@@ -1413,11 +1490,13 @@
 
 <div id="iconDataLoader" style="display: none;" data-icon-url="https://i.imgur.com/YpR6PdE.png" data-non-fa-na-icon-url="https://i.imgur.com/95LGztY.png"></div>
 
+<!-- NEU: Loading Overlay Element -->
 <div id="loadingOverlay" style="display: none;">
     <div class="spinner"></div>
     <span>Laden...</span>
 </div>
 
+<!-- NEW: Chart Modal Structure -->
 <div id="chartModal" class="modal-overlay">
     <div class="note-modal-content" style="max-width: 884px;"> <!-- Increased max-width by 30% from 680px -->
         <h2>Diagramm</h2>
@@ -1477,18 +1556,21 @@ const db = (() => {
             request.onsuccess = (event) => { dbInstance = event.target.result; resolve(dbInstance); };
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
+                // Create "entries" object store if not exists
                 if (!db.objectStoreNames.contains('entries')) {
                     const objectStore = db.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
                     objectStore.createIndex('category', 'category', { unique: false });
                     objectStore.createIndex('category_code', ['category', 'code'], { unique: true });
                 }
                 
+                // NEW: Create "category_metadata" object store
                 if (!db.objectStoreNames.contains('category_metadata')) {
                     db.createObjectStore('category_metadata', { keyPath: 'categoryNumber' });
                 }
             };
         });
     }
+    // Führt eine Transaktion in IndexedDB aus
     async function performTransaction(storeName, mode, action) {
         const db = await openDB();
         const transaction = db.transaction(storeName, mode);
@@ -1519,6 +1601,7 @@ const db = (() => {
         },
         getAllEntries: () => performTransaction('entries', 'readonly', store => store.getAll()),
         
+        // NEW: Functions for category_metadata
         saveCategoryMetadata: (metadata) => performTransaction('category_metadata', 'readwrite', store => store.put(metadata)),
         getCategoryMetadata: (categoryNumber) => performTransaction('category_metadata', 'readonly', store => store.get(categoryNumber)),
     };
@@ -1527,14 +1610,16 @@ const db = (() => {
 /* --- Hauptanwendungslogik --- */
 
 (async function(){
+    // DOM-Elemente abrufen
     const categoryGrid1 = document.getElementById('categoryGrid1');
     const categoryGrid2 = document.getElementById('categoryGrid2');
     const categoryLabelLeft = document.getElementById('categoryLabelLeft');
     const mainControls = document.getElementById('mainControls');
     const listSection = document.getElementById('listSection');
     const logBody = document.getElementById('logBody');
-    const chartButtonContainer = document.getElementById('chartButtonContainer');
+    const chartButtonContainer = document.getElementById('chartButtonContainer'); // Hozzáadva a chart gomb konténerének DOM eleme
 
+    // Modale Elemente
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const noteModal = document.getElementById('noteModal');
@@ -1546,13 +1631,16 @@ const db = (() => {
     const customPromptInput = document.getElementById('customPromptInput');
     const qrCodeModal = document.getElementById('qrCodeModal');
     const qrCodeContainer = document.getElementById('qrCodeContainer');
+    // NEU: Search Modal Elemente
     const searchModal = document.getElementById('searchModal');
     const searchAuftragInput = document.getElementById('searchAuftragInput');
     const searchResultsContainer = document.getElementById('searchResultsContainer');
+    // NEW: Bock Selection Modal Elements
     const bockSelectionModal = document.getElementById('bockSelectionModal');
     const bockButtonsContainer = document.getElementById('bockButtonsContainer');
     const bockCancelBtn = document.getElementById('bockCancelBtn');
 
+    // UPDATED: Image Viewer Controls
     const closeImageModalBtn = document.getElementById('closeImageModalBtn');
     const deleteImageBtn = document.getElementById('deleteImageBtn');
     const rotateLeftBtn = document.getElementById('rotateLeftBtn');
@@ -1562,6 +1650,7 @@ const db = (() => {
     const downloadImageBtn = document.getElementById('downloadImageBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
 
+    // Steuerungsbuttons
     const manualEntryBtn = document.getElementById('manualEntryBtn');
     const clearCategoryBtn = document.getElementById('clearCategoryBtn');
     const selectAllUploadsToggle = document.getElementById('selectAllUploadsToggle');
@@ -1570,50 +1659,60 @@ const db = (() => {
     const searchBtn = document.getElementById('searchBtn');
     const chartBtn = document.getElementById('chartBtn');
 
+    // Anwendungsstatus
     let currentCategory = null;
     let entries = [];
     let allEntriesData = [];
     let entryIdToUpdate = null;
     let noteEntryIdToUpdate = null;
 
+    // Globaler Status für das Bildkarussell im Modal
     let currentModalImages = [];
     let currentModalImageIndex = 0;
     let currentImageEntryId = null;
 
+    // NEW: Global variables for Bock selection flow
     let currentTriggeringCategoryButton = null;
     let currentCategoryForBockSelection = null;
     let currentBockModalFocusIndex = -1;
 
+    // Laser scanner input buffer and timer
     let laserScannerBuffer = [];
     let laserScannerTimer = null;
 
+    // Global variable to save the focused category button
     let focusedCategoryButton = null;
 
+    // Grid constants for navigation
     const GRID1_COLS = 8;
     const GRID2_COLS = 12;
     const GRID1_SIZE = 16;
     const GRID2_SIZE = 12;
     const TOTAL_BUTTONS = GRID1_SIZE + GRID2_SIZE;
 
+    // Image Viewer specific state
     let currentZoom = 1;
-    let currentRotation = 0; 
+    let currentRotation = 0; // 0, 90, 180, 270 degrees
     let isDragging = false;
     let startX = 0;
     let startY = 0;
     let translateX = 0;
     let translateY = 0;
-    let initialTranslateX = 0; 
-    let initialTranslateY = 0; 
+    let initialTranslateX = 0; // Store initial translation for proper panning
+    let initialTranslateY = 0; // Store initial translation for proper panning
 
+    // Helper to apply all transforms to the image
     function applyImageTransform() {
         modalImage.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg) translate(${translateX}px, ${translateY}px)`;
     }
 
+    // Update state of viewer controls (zoom, rotate buttons)
     function updateImageViewerControlsState() {
-        zoomOutBtn.disabled = currentZoom <= 1; 
-        zoomInBtn.disabled = currentZoom >= 20; 
+        zoomOutBtn.disabled = currentZoom <= 1; // Disable zoom out if at original size
+        zoomInBtn.disabled = currentZoom >= 20; // Increased max zoom to 20x
     }
 
+    // Update the state of navigation buttons in the image modal
     function updateImageModalNavigation() {
         const prevBtn = document.getElementById('imageModalPrevBtn');
         const nextBtn = document.getElementById('imageModalNextBtn');
@@ -1629,12 +1728,13 @@ const db = (() => {
         }
     }
 
+    // Show next image (updated to reset transforms)
     function showNextImage() {
         if (currentModalImageIndex < currentModalImages.length - 1) {
             currentModalImageIndex++;
             modalImage.src = currentModalImages[currentModalImageIndex];
-            currentZoom = 1; 
-            currentRotation = 0; 
+            currentZoom = 1; // Reset zoom
+            currentRotation = 0; // Reset rotation
             translateX = 0;
             translateY = 0;
             applyImageTransform();
@@ -1643,12 +1743,13 @@ const db = (() => {
         }
     }
 
+    // Show previous image (updated to reset transforms)
     function showPrevImage() {
         if (currentModalImageIndex > 0) {
             currentModalImageIndex--;
             modalImage.src = currentModalImages[currentModalImageIndex];
-            currentZoom = 1; 
-            currentRotation = 0; 
+            currentZoom = 1; // Reset zoom
+            currentRotation = 0; // Reset rotation
             translateX = 0;
             translateY = 0;
             applyImageTransform();
@@ -1657,34 +1758,38 @@ const db = (() => {
         }
     }
 
+    // Zoom functions
     function zoomIn() {
-        currentZoom = Math.min(currentZoom + 1.0, 20); 
+        currentZoom = Math.min(currentZoom + 1.0, 20); // Increased zoom step to 1.0
         applyImageTransform();
         updateImageViewerControlsState();
-        updateImageCursor(); 
+        updateImageCursor(); // Update cursor after zoom
     }
 
     function zoomOut() {
-        currentZoom = Math.max(currentZoom - 1.0, 1); 
+        currentZoom = Math.max(currentZoom - 1.0, 1); // Increased zoom step to 1.0
+        // If zooming out to 1x, reset pan
         if (currentZoom === 1) {
             translateX = 0;
             translateY = 0;
         }
         applyImageTransform();
         updateImageViewerControlsState();
-        updateImageCursor(); 
+        updateImageCursor(); // Update cursor after zoom
     }
 
+    // Rotate functions
     function rotateLeft() {
-        currentRotation = (currentRotation - 90 + 360) % 360; 
+        currentRotation = (currentRotation - 90 + 360) % 360; // Keep between 0 and 270
         applyImageTransform();
     }
 
     function rotateRight() {
-        currentRotation = (currentRotation + 90) % 360; 
+        currentRotation = (currentRotation + 90) % 360; // Keep between 0 and 270
         applyImageTransform();
     }
 
+    // Download image function
     async function downloadImage() {
         const imageUrl = currentModalImages[currentModalImageIndex];
         if (!imageUrl) {
@@ -1705,7 +1810,7 @@ const db = (() => {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url); 
+            URL.revokeObjectURL(url); // Clean up
         } catch (error) {
             console.error("Fehler beim Herunterladen des Bildes:", error);
             showCustomAlert('Beim Herunterladen des Bildes ist ein Fehler aufgetreten.', 'Fehler');
@@ -1714,6 +1819,7 @@ const db = (() => {
         }
     }
 
+    // Fullscreen toggle function
     function toggleFullscreen() {
         if (document.fullscreenElement) {
             document.exitFullscreen();
@@ -1725,6 +1831,7 @@ const db = (() => {
         }
     }
 
+    // Loading Overlay Steuerungen
     function showLoading(message = "Laden...") {
         loadingOverlay.querySelector('span').textContent = message;
         loadingOverlay.style.display = 'flex';
@@ -1736,6 +1843,7 @@ const db = (() => {
         document.body.classList.remove('modal-open');
     }
 
+    // Funktion zum Fokussieren der Schaltflächen
     function setButtonFocus(button) {
         if (!button) return;
 
@@ -1751,6 +1859,7 @@ const db = (() => {
         button.focus();
     }
 
+    // Function to set focus within the bock modal
     function setBockModalFocus(index) {
         const allNavigableElements = Array.from(bockButtonsContainer.querySelectorAll('.bock-button')).concat([bockCancelBtn]);
         if (index >= 0 && index < allNavigableElements.length) {
@@ -1759,6 +1868,7 @@ const db = (() => {
         }
     }
 
+    // Keydown listener for the bock selection modal
     bockSelectionModal.addEventListener('keydown', (e) => {
         if (bockSelectionModal.style.display !== 'flex') return;
 
@@ -1781,18 +1891,18 @@ const db = (() => {
         } else if (e.key === 'ArrowRight') {
             nextIdx = (currentIdx + 1) % totalNavigableElements;
         } else if (e.key === 'ArrowUp') {
-            if (currentIdx === totalNavigableElements - 1) { 
-                nextIdx = totalBockButtons - 1; 
-            } else if (currentIdx < numCols) { 
-                nextIdx = totalNavigableElements - 1; 
+            if (currentIdx === totalNavigableElements - 1) { // If currently on cancel button
+                nextIdx = totalBockButtons - 1; // Move to the last bock button
+            } else if (currentIdx < numCols) { // If in the first row of bock buttons
+                nextIdx = totalNavigableElements - 1; // Move to cancel button
             } else {
                 nextIdx = currentIdx - numCols;
             }
         } else if (e.key === 'ArrowDown') {
-            if (currentIdx === totalNavigableElements - 1) { 
-                nextIdx = 0; 
-            } else if (currentIdx >= totalBockButtons - numCols) { 
-                nextIdx = totalNavigableElements - 1; 
+            if (currentIdx === totalNavigableElements - 1) { // If currently on cancel button
+                nextIdx = 0; // Move to the first bock button
+            } else if (currentIdx >= totalBockButtons - numCols) { // If in the last row of bock buttons
+                nextIdx = totalNavigableElements - 1; // Move to cancel button
             } else {
                 nextIdx = currentIdx + numCols;
             }
@@ -1809,6 +1919,7 @@ const db = (() => {
     });
 
 
+    // Erstellt und initialisiert Kategorie-Buttons
     for(let i=1; i<=16; i++){
         const btn = document.createElement('button');
         const numberSpan = document.createElement('span');
@@ -1828,7 +1939,7 @@ const db = (() => {
             }
             handleManualEntryTrigger();
         });
-        btn.setAttribute('tabindex', '0'); 
+        btn.setAttribute('tabindex', '0'); // Make button focusable
         categoryGrid1.appendChild(btn);
     }
     for(let i=17; i<=28; i++){
@@ -1850,10 +1961,11 @@ const db = (() => {
             }
             handleManualEntryTrigger();
         });
-        btn.setAttribute('tabindex', '0'); 
+        btn.setAttribute('tabindex', '0'); // Make button focusable
         categoryGrid2.appendChild(btn);
     }
 
+    // Aktualisiert die Farben és Symbole der Kategorie-Buttons basierend auf den Daten
     async function updateCategoryButtonColors() {
         const allCategoryButtons = document.querySelectorAll('.grid button');
         const iconUrl = document.getElementById('iconDataLoader').dataset.iconUrl;
@@ -1920,7 +2032,7 @@ const db = (() => {
                 button.appendChild(faNaIcon);
             }
             if (hasNonFaNaEntry) {
-                const nonFaNaIcon = document.createElement('img'); 
+                const nonFaNaIcon = document.createElement('img'); // Corrected variable name
                 nonFaNaIcon.src = nonFaNaIconUrl;
                 nonFaNaIcon.alt = 'Nicht-FA/NA-Status-Icon';
                 nonFaNaIcon.classList.add('non-fa-na-icon');
@@ -1944,6 +2056,7 @@ const db = (() => {
         }
     }
 
+    // NEU: Globale Header-Icons aktualisieren
     async function updateGlobalHeaderIcons() {
         if (!currentCategory) {
             if (masterUploadContainer) masterUploadContainer.classList.remove('has-data');
@@ -1976,6 +2089,7 @@ const db = (() => {
         }
     }
 
+    // Aktualisiert die Farbe der unteren Steuerungsbuttons (manuelle Eingabe)
     function updateControlButtonsColor(isEmpty) {
         if (isEmpty) {
             manualEntryBtn.classList.add('empty-category-control');
@@ -1984,6 +2098,7 @@ const db = (() => {
         }
     }
 
+    // Ereignis-Handler für Kategorieauswahl (einzelner Klick oder Enter)
     async function selectCategory(num, btn){
         const prevActive = document.querySelector('.grid button.active');
         if(prevActive) prevActive.classList.remove('active');
@@ -2000,8 +2115,8 @@ const db = (() => {
             updateHeaderAndControls();
             updateTraverseHeader();
             await updateGlobalHeaderIcons();
-            await updateBockHeader(); 
-            updateTableHeaderColors(); 
+            await updateBockHeader(); // NEW: Update the Bock header when category changes
+            updateTableHeaderColors(); // NEW: Update table header colors based on data
             
             mainControls.style.display = 'block';
             listSection.style.display = 'block';
@@ -2016,6 +2131,7 @@ const db = (() => {
         }
     }
 
+    // Hilfsfunktion zum Aktualisieren des unteren Labels és der Steuerleiste
     function updateHeaderAndControls() {
         if (!currentCategory) {
             categoryLabelLeft.innerHTML = '';
@@ -2025,8 +2141,11 @@ const db = (() => {
 
         const isEmpty = entries.length === 0;
         const iconColor = isEmpty ? '%236c757d' : '%230056b3';
+        // MODIFIED: Dynamische szín a SVG ikonhoz
         const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
 
+        // For the bottom control bar, we'll also use the new structure for consistency
+        // but keep the currentCategory number as the primary display next to it.
         categoryLabelLeft.innerHTML = `
             <div class="icon-and-text-group">
                 ${iconSvg}
@@ -2034,12 +2153,14 @@ const db = (() => {
             </div>
             <span class="traverse-number-in-controls">${currentCategory}</span>
         `;
+        // The color for the entire categoryLabelLeft (including the number) is set here
         categoryLabelLeft.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)';
-        categoryLabelLeft.style.display = 'flex'; 
-        categoryLabelLeft.style.alignItems = 'center'; 
-        categoryLabelLeft.style.justifyContent = 'center'; 
+        categoryLabelLeft.style.display = 'flex'; /* Ensure it's a flex container */
+        categoryLabelLeft.style.alignItems = 'center'; /* Align items vertically */
+        categoryLabelLeft.style.justifyContent = 'center'; /* Center content horizontally */
     }
 
+    // NEU: Funktion zum Aktualisieren des Tabellenkopfes
     function updateTraverseHeader() {
         const traverseHeader = document.getElementById('traverse-header');
         if (!traverseHeader) return;
@@ -2056,18 +2177,26 @@ const db = (() => {
         const iconColor = isEmpty ? '%236c757d' : '%230056b3';
         const iconSvg = `<img src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="header-traverse-icon">`;
 
+        // For the table header, just the icon is usually sufficient.
+        // If the user wants the number or label here, they can specify.
         traverseHeader.innerHTML = `${iconSvg}`;
         traverseHeader.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)';
         traverseHeader.style.fontWeight = 'bold';
         traverseHeader.style.fontSize = '1.5em';
     }
 
+    // NEW: Function to update the Bock header in the table
     async function updateBockHeader() {
         const bockHeaderCell = document.getElementById('bock-header-cell');
         if (!bockHeaderCell) return;
-        
+        // No need to get headerBockNumberSpan as it's removed from HTML
+        // const headerBockNumberSpan = document.getElementById('headerBockNumber');
+
+        // Always set headerBockNumber to empty string as per user request "ne legyen melette a felirat"
+        // headerBockNumberSpan.textContent = ''; // This line is no longer needed
+
         if (!currentCategory) {
-            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; 
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; // Default color for the icon
             return;
         }
 
@@ -2075,12 +2204,14 @@ const db = (() => {
         const bockNumber = categoryMetadata ? categoryMetadata.bockNumber : null;
 
         if (bockNumber) {
-            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--primary)'; 
+            // No text content here, only the icon changes color
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--primary)'; // Blue if a bock number is set
         } else {
-            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; 
+            bockHeaderCell.querySelector('.bock-header-icon').style.color = 'var(--muted)'; // Muted if no bock number
         }
     }
 
+    // NEW: Function to update the table header (th) colors based on data presence
     function updateTableHeaderColors() {
         const tableElement = document.querySelector('table');
         if (!tableElement) return;
@@ -2092,6 +2223,7 @@ const db = (() => {
         }
     }
 
+    // Zeigt ein benutzerdefiniertes Alert-Modal an
     function showCustomAlert(message, title = 'Information') {
         const existingModal = document.getElementById('customAlertModal');
         if (existingModal) existingModal.remove();
@@ -2136,6 +2268,7 @@ const db = (() => {
         });
     }
 
+    // Einfaches Bestätigungs-Modal zum Löschen von Bildern
     function showSimpleConfirm(message, title = 'Bestätigung') {
         return new Promise(resolve => {
             const existingModal = document.getElementById('customConfirmModal');
@@ -2192,6 +2325,7 @@ const db = (() => {
         });
     }
 
+    // Komplexeres Bestätigungs-Modal mit PDF-Export-Option
     function showCustomConfirm(message, title = 'Bestätigung', entry = null) {
         return new Promise(resolve => {
             const existingModal = document.getElementById('customConfirmModal');
@@ -2260,6 +2394,7 @@ const db = (() => {
         });
     }
 
+    // Open image modal (updated for new features)
     function openImageModal(images, startIndex, entryId) {
         currentModalImages = images;
         currentModalImageIndex = startIndex;
@@ -2267,6 +2402,7 @@ const db = (() => {
 
         modalImage.src = currentModalImages[currentModalImageIndex];
 
+        // Reset transformations
         currentZoom = 1;
         currentRotation = 0;
         translateX = 0;
@@ -2275,59 +2411,73 @@ const db = (() => {
 
         imageModal.style.display = 'flex';
         document.body.classList.add('modal-open');
-        imageModal.focus(); 
+        imageModal.focus(); // Focus the modal when it opens
 
         updateImageModalNavigation();
         updateImageViewerControlsState();
-        updateImageCursor(); 
+        updateImageCursor(); // Set initial cursor
     }
 
+    // Pan functionality (refined)
     modalImage.addEventListener('mousedown', onMouseDown);
 
+    // dragStartX, dragStartY, initialTranslateX, initialTranslateY are already global
+
     function onMouseDown(e) {
-        if (e.button === 0 && currentZoom > 1) { 
-            e.preventDefault(); 
+        if (e.button === 0 && currentZoom > 1) { // Only left mouse button (0) and if zoomed in
+            e.preventDefault(); // Prevent default browser drag behavior
             isDragging = true;
-            initialTranslateX = translateX; 
+            initialTranslateX = translateX; // Store current image translation
             initialTranslateY = translateY;
-            dragStartX = e.clientX; 
+            dragStartX = e.clientX; // Store current mouse position
             dragStartY = e.clientY;
-            modalImage.style.cursor = 'grabbing'; 
+            modalImage.style.cursor = 'grabbing'; // Change cursor to grabbing
             
+            // Attach listeners to document to capture events even if mouse leaves the image
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
         }
     }
 
     function onMouseMove(e) {
-        if (!isDragging) return; 
-        e.preventDefault(); 
+        if (!isDragging) return; // Only pan if dragging is active
+        e.preventDefault(); // Prevent text selection etc.
 
+        // Calculate new translation based on mouse movement and zoom level
+        // Divide by currentZoom to reduce sensitivity at higher zoom levels
         translateX = initialTranslateX + (e.clientX - dragStartX) / currentZoom;
         translateY = initialTranslateY + (e.clientY - dragStartY) / currentZoom;
         applyImageTransform();
     }
 
     function onMouseUp(e) {
+        // This function will be attached to the document, so it catches releases anywhere.
+        // We only stop dragging if the left button was the one released.
         if (e.button === 0) {
             isDragging = false;
-            modalImage.classList.remove('zoomed'); 
+            modalImage.classList.remove('zoomed'); // Remove grabbing cursor class
+            // Remove document-level listeners
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
-            updateImageCursor(); 
+            updateImageCursor(); // Update cursor based on current zoom state
         }
     }
 
+    // mouseleave on modalImage is still a good fallback for when the mouse leaves the browser window
     modalImage.addEventListener('mouseleave', () => {
-        if (isDragging) { 
+        if (isDragging) { // If mouse leaves the image while dragging
+            // This is a safety net. The document.mouseup should ideally catch the release.
+            // But if the mouse leaves the *browser window*, mouseup won't fire.
+            // So, this ensures dragging stops if the cursor goes off the image.
             isDragging = false;
             modalImage.classList.remove('zoomed');
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
-            updateImageCursor(); 
+            updateImageCursor(); // Update cursor based on current zoom state
         }
     });
 
+    // Function to update the image cursor based on zoom level and dragging state
     function updateImageCursor() {
         if (isDragging) {
             modalImage.style.cursor = 'grabbing';
@@ -2338,6 +2488,7 @@ const db = (() => {
         }
     }
 
+    // Touch events for panning (mobile)
     modalImage.addEventListener('touchstart', (e) => {
         if (currentZoom > 1 && e.touches.length === 1) {
             isDragging = true;
@@ -2352,9 +2503,9 @@ const db = (() => {
 
     modalImage.addEventListener('touchmove', (e) => {
         if (!isDragging || e.touches.length !== 1) return;
-        e.preventDefault(); 
-        translateX = initialTranslateX + (e.touches[0].clientX - startX) / currentZoom; 
-        translateY = initialTranslateY + (e.touches[0].clientY - startY) / currentZoom; 
+        e.preventDefault(); // Prevent scrolling
+        translateX = initialTranslateX + (e.touches[0].clientX - startX) / currentZoom; // Divide by currentZoom for touch too
+        translateY = initialTranslateY + (e.touches[0].clientY - startY) / currentZoom; // Divide by currentZoom for touch too
         applyImageTransform();
     }, { passive: false });
 
@@ -2364,30 +2515,37 @@ const db = (() => {
         updateImageCursor();
     });
 
+    // NEW: Mouse wheel zoom
     modalImage.addEventListener('wheel', (e) => {
-        e.preventDefault(); 
-        const zoomAmount = 0.1; 
+        e.preventDefault(); // Prevent page scrolling
+        const zoomAmount = 0.1; // Keep this small for fine control with wheel
         const oldZoom = currentZoom;
 
+        // Calculate mouse position relative to the image
         const rect = modalImage.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - e.clientY - rect.top;
 
+        // Calculate current image center relative to its container
         const imageCenterX = rect.width / 2;
         const imageCenterY = rect.height / 2;
 
+        // Calculate relative position of mouse from image center
         const relativeMouseX = (mouseX - imageCenterX) / oldZoom;
         const relativeMouseY = (mouseY - imageCenterY) / oldZoom;
 
-        if (e.deltaY < 0) { 
-            currentZoom = Math.min(currentZoom + zoomAmount, 20); 
-        } else { 
+        if (e.deltaY < 0) { // Zoom in
+            currentZoom = Math.min(currentZoom + zoomAmount, 20); // Increased max zoom to 20x
+        } else { // Zoom out
             currentZoom = Math.max(currentZoom - zoomAmount, 1);
         }
 
+        // Adjust translation to keep the point under the mouse cursor fixed
+        // This formula helps to zoom into the mouse pointer location
         translateX += (relativeMouseX * (oldZoom - currentZoom));
         translateY += (relativeMouseY * (oldZoom - currentZoom));
 
+        // If zoomed out to 1x, reset pan
         if (currentZoom === 1) {
             translateX = 0;
             translateY = 0;
@@ -2395,10 +2553,11 @@ const db = (() => {
 
         applyImageTransform();
         updateImageViewerControlsState();
-        updateImageCursor(); 
+        updateImageCursor(); // Update cursor after zoom
     });
 
 
+    // Löscht das aktuelle Bild aus dem Modal und der Datenbank (updated for new structure)
     async function deleteCurrentImage() {
         if (!currentImageEntryId || currentModalImages.length === 0) {
             showCustomAlert('Kein Bild zum Löschen verfügbar.', 'Fehler');
@@ -2416,13 +2575,14 @@ const db = (() => {
             if (entry) {
                 const imageUrlToDelete = currentModalImages[currentModalImageIndex];
 
+                // If the primary image is being deleted
                 if (entry.image === imageUrlToDelete) {
                     if (entry.kepek && entry.kepek.length > 0) {
-                        entry.image = entry.kepek.shift(); 
+                        entry.image = entry.kepek.shift(); // Promote first kepek image to primary
                     } else {
-                        entry.image = null; 
+                        entry.image = null; // No more images for this entry
                     }
-                } else if (entry.kepek) { 
+                } else if (entry.kepek) { // If it's a secondary image
                     const indexToDelete = entry.kepek.indexOf(imageUrlToDelete);
                     if (indexToDelete > -1) {
                         entry.kepek.splice(indexToDelete, 1);
@@ -2430,17 +2590,19 @@ const db = (() => {
                 }
 
                 await db.updateEntry(entry);
+                // Update the 'entries' array in memory with the modified entry
                 entries = entries.map(e => e.id === entry.id ? entry : e);
-                renderTable(); 
+                renderTable(); // Re-render the table to reflect changes
 
                 const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
                 if (allRemainingImages.length > 0) {
+                    // Adjust index if the deleted image was the last one
                     if (currentModalImageIndex >= allRemainingImages.length) {
                         currentModalImageIndex = allRemainingImages.length - 1;
                     }
-                    openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId); 
+                    openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId); // Re-open with updated image list
                 } else {
-                    closeModal(imageModal); 
+                    closeModal(imageModal); // Close modal if no images left
                 }
             }
         } catch (error) {
@@ -2452,6 +2614,7 @@ const db = (() => {
     }
 
 
+    // renderTable mit der Spalte für die laufende Nummer
     function renderTable(){
         const sortedEntries = entries.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
         logBody.innerHTML = sortedEntries.map((e,i) => {
@@ -2503,6 +2666,7 @@ const db = (() => {
         attachTableEventListeners();
     }
 
+    // Fügt Ereignis-Listener zu den Tabellenelementen hinzu
     function attachTableEventListeners() {
         logBody.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', handleDelete));
         logBody.querySelectorAll('.noteToggleBtn').forEach(btn => btn.addEventListener('click', openNoteModal));
@@ -2534,6 +2698,7 @@ const db = (() => {
             headerDeleteBtn.addEventListener('click', handleHeaderDeleteClick);
         }
 
+        // UPDATED: QR code modal now opens on clicking the 'auftrag-clickable' span
         logBody.querySelectorAll('.auftrag-clickable').forEach(span => {
             span.addEventListener('click', (event) => {
                 const orderCode = event.currentTarget.dataset.code;
@@ -2542,6 +2707,7 @@ const db = (() => {
         });
     }
 
+    // Neue Funktion zur Behandlung des Change-Events der Master-Checkbox
     function handleMasterToggleChange(event) {
         const isChecked = event.target.checked;
         logBody.querySelectorAll('.upload-checkbox').forEach(checkbox => {
@@ -2549,6 +2715,7 @@ const db = (() => {
         });
     }
 
+    // Neue Funktion zur Behandlung des Klick-Events des Master-Upload-Containers
     function handleMasterContainerClick(event) {
         if (event.target !== selectAllUploadsToggle) {
             selectAllUploadsToggle.checked = !selectAllUploadsToggle.checked;
@@ -2556,6 +2723,7 @@ const db = (() => {
         }
     }
     
+    // NEU: Header-Löschtaste-Klick-Handler
     async function handleHeaderDeleteClick() {
         if (!currentCategory) {
             showCustomAlert('Keine Kategorie zum Löschen ausgewählt.', 'Fehler');
@@ -2582,8 +2750,8 @@ const db = (() => {
                 renderTable();
                 await updateCategoryButtonColors();
                 updateTraverseHeader();
-                await updateBockHeader(); 
-                updateTableHeaderColors(); 
+                await updateBockHeader(); // NEW: Update Bock header after clearing category
+                updateTableHeaderColors(); // NEW: Update table header colors
 
                 const count = await db.getEntryCountForCategory(currentCategory);
                 if (count === 0) {
@@ -2602,19 +2770,21 @@ const db = (() => {
         }
     }
     
+    // Lädt ein Bild (gibt ein Promise mit einem Image-Objekt zurück)
     function loadImage(src) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
             img.onload = () => resolve(img);
             img.onerror = () => {
-                console.warn(`Fehler beim Bereinigen des Bildes: ${src.substring(0, 50)}...`); 
+                console.warn(`Fehler beim Bereinigen des Bildes: ${src.substring(0, 50)}...`); // Changed imageDataUrl to src
                 reject(new Error('Fehler beim Laden des Bildes für die Bereinigung.'));
             };
-            img.src = src; 
+            img.src = src; // Changed imageDataUrl to src
         });
     }
 
+    // --- PDF-GENERIERUNG (VERBESSERT) ---
     async function generatePdfForEntry(entry) {
         if (typeof window.jspdf === 'undefined') {
             console.error('jsPDF ist nicht geladen!');
@@ -2644,13 +2814,15 @@ const db = (() => {
         doc.text(shiftText, 10, 50);
 
         doc.text('Traverse: ', 10, 65);
+        // MODIFIED: Make traverse number not bold
         doc.text(String(entry.category), 10 + doc.getStringUnitWidth('Traverse: ') * 18 / doc.internal.scaleFactor, 65);
-        doc.setFont(undefined, 'normal'); 
+        doc.setFont(undefined, 'normal'); // Ensure font is normal for subsequent text
 
         let yPos = 80;
         if (entry.bockNumber) {
             doc.setFontSize(18);
-            doc.text(`Hub- & Senkstation: ${entry.bockNumber}`, 10, yPos);  
+            // MODIFIED: Change "Bock-Nummer" to "Rüststation"
+            doc.text(`Hub- & Senkstation: ${entry.bockNumber}`, 10, yPos);  <!-- Changed to Hub- & Senkstation -->
             yPos += 15;
         }
 
@@ -2726,6 +2898,7 @@ const db = (() => {
             }
         }
         
+        // MODIFIED: Change PDF filename format
         const auftragName = entry.code.replace(/_/g, ' ');
         const travNumber = String(entry.category).replace(/_/g, ' ');
         const rstNumber = String(entry.bockNumber || '0').replace(/_/g, ' ');
@@ -2733,6 +2906,7 @@ const db = (() => {
         hideLoading();
     }
 
+    // Löschereignis-Handler
     async function handleDelete(event) {
         const id = parseInt(event.currentTarget.dataset.id);
         const entryToDelete = entries.find(e => e.id === id);
@@ -2755,8 +2929,8 @@ const db = (() => {
                 renderTable();
                 await updateCategoryButtonColors();
                 updateTraverseHeader();
-                await updateBockHeader(); 
-                updateTableHeaderColors(); 
+                await updateBockHeader(); // NEW: Update Bock header after deleting entry
+                updateTableHeaderColors(); // NEW: Update table header colors
 
                 const count = await db.getEntryCountForCategory(currentCategory);
                 if (count === 0) {
@@ -2775,6 +2949,7 @@ const db = (() => {
         }
     }
 
+    // Öffnet das Notiz-Modal
     function openNoteModal(event) {
         noteEntryIdToUpdate = parseInt(event.currentTarget.dataset.id);
         const entry = entries.find(e => e.id === noteEntryIdToUpdate);
@@ -2786,6 +2961,7 @@ const db = (() => {
         }
     }
 
+    // Speichert die Notiz aus dem Modal
     async function saveNoteFromModal() {
         showLoading("Notiz wird gespeichert...");
         try {
@@ -2806,6 +2982,7 @@ const db = (() => {
         }
     }
 
+    // Ereignis-Handler für den Bild-Upload-Button-Klick
     function handleUploadPhotoClick(event) {
         const rowId = parseInt(event.currentTarget.closest('tr').dataset.id);
         entryIdToUpdate = rowId;
@@ -2813,6 +2990,7 @@ const db = (() => {
         imageUploadInput.click();
     }
     
+    // Bereinigt das Bild (Größenanpassung/Komprimierung in JPEG)
     function sanitizeImage(imageDataUrl, quality = 0.95) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -2832,6 +3010,7 @@ const db = (() => {
         });
     }
 
+    // Ereignis-Handler für Dateiauswahl (für Bild-Upload)
     async function handleFileSelected(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -2847,7 +3026,7 @@ const db = (() => {
 
                 if (checkedUploadCheckboxes.length > 0) {
                     checkedUploadCheckboxes.forEach(checkbox => {
-                        const rowId = parseInt(checkbox.dataset.id); 
+                        const rowId = parseInt(checkbox.dataset.id); // Get the row's data-id
                         targetEntryIds.push(rowId);
                     });
                 } else {
@@ -2888,6 +3067,7 @@ const db = (() => {
         event.target.value = null;
     }
 
+    // Neuen Eintrag hinzufügen
     async function addNewEntry(code, image, source) {
         if (currentCategory === null) {
             showCustomAlert('Kérjük, válasszon ki egy kategóriát, mielőtt bejegyzést adna hozzá!', 'Kategória hiányzik');
@@ -2906,6 +3086,7 @@ const db = (() => {
         const bockNumberForEntry = categoryMetadata ? categoryMetadata.bockNumber : null;
 
         const newEntry = {
+            // id: null, // Removed this line to let IndexedDB auto-increment
             code: code,
             date: new Date().toISOString(),
             note: '',
@@ -2920,14 +3101,14 @@ const db = (() => {
         try {
             const wasEmpty = entries.length === 0;
             const newId = await db.addEntry(newEntry);
-            newEntry.id = newId; 
+            newEntry.id = newId; // This assignment is correct *after* the add operation
             entries.push(newEntry);
             renderTable();
             await updateCategoryButtonColors();
             await updateGlobalHeaderIcons();
             updateHeaderAndControls();
-            await updateBockHeader(); 
-            updateTableHeaderColors(); 
+            await updateBockHeader(); // NEW: Update Bock header after adding new entry
+            updateTableHeaderColors(); // NEW: Update table header colors
 
             if (wasEmpty) {
                 updateControlButtonsColor(false);
@@ -2959,6 +3140,7 @@ const db = (() => {
         }
     }
 
+    // Ereignis-Handler für den Button zur manuellen Eingabe und doppelte Klicks
     async function handleManualEntryTrigger() {
         if (currentCategory === null) {
             showCustomAlert('Kérjük, válasszon ki egy kategóriát, mielőtt bejegyzést adna hozzá!', 'Kategória hiányzik');
@@ -2987,16 +3169,20 @@ const db = (() => {
         }
     }
 
+    // Zeigt ein benutzerdefiniertes Prompt-Modal an
     function showCustomPrompt(message, title = 'Eingabe') {
         return new Promise(async resolve => {
             const promptModal = document.getElementById('customPromptModal');
             const okBtn = document.getElementById('customPromptOkBtn');
             const cancelBtn = document.getElementById('customPromptCancelBtn');
             const categoryNumberSpan = document.getElementById('promptCategoryNumber');
+            // const promptTraverseIcon = document.getElementById('promptTraverseIcon'); // Ezt már nem kell lekérni, mert az SVG-t direktben generáljuk
 
-            const iconColor = '%230056b3'; 
+            // MODIFIED: Az ikon színe mindig kék lesz
+            const iconColor = '%230056b3'; // Mindig kék
             const iconSvg = `<img id="promptTraverseIcon" src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"%3E%3Crect x="0" y="0" width="100" height="20" fill="${iconColor}"/%3E%3Crect x="10" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="30" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="55" y="25" width="15" height="15" fill="${iconColor}"/%3E%3Crect x="75" y="25" width="15" height="15" fill="${iconColor}"/%3E%3C/svg%3E' alt="Traversen-Icon" class="category-label-icon">`;
 
+            // Clear previous content and add icon, then "Traverse" label, then number
             categoryNumberSpan.innerHTML = `
                 <div class="icon-and-text-group">
                     ${iconSvg}
@@ -3004,19 +3190,22 @@ const db = (() => {
                 </div>
                 <span class="category-number-display-large">${currentCategory}</span>
             `;
+            // A kategória számának és a "Traverse" feliratnak a színe továbbra is dinamikus marad
             const isEmpty = entries.length === 0;
             categoryNumberSpan.style.color = isEmpty ? 'var(--muted)' : 'var(--primary)';
 
             customPromptInput.value = '';
-            customPromptInput.placeholder = message; 
+            customPromptInput.placeholder = message; // Set the placeholder text
             promptModal.style.display = 'flex';
             document.body.classList.add('modal-open');
             customPromptInput.focus();
 
+            // Static styles for OK button (always blue)
             okBtn.style.background = 'var(--primary)';
             okBtn.style.color = 'white';
             okBtn.style.boxShadow = 'var(--shadow-soft)';
 
+            // Handle Hover and Active states dynamically for OK button
             okBtn.onmouseover = () => {
                 okBtn.style.background = 'var(--primary-dark)';
                 okBtn.style.boxShadow = 'var(--shadow-medium)';
@@ -3087,6 +3276,7 @@ const db = (() => {
         });
     }
 
+    // Schließt ein Modal
     function closeModal(modal) {
         if (modal === bockSelectionModal) {
             currentBockModalFocusIndex = -1;
@@ -3094,24 +3284,28 @@ const db = (() => {
         if (modal) {
             modal.style.display = 'none';
         }
+        // If the closed modal was the imageModal, also reset its specific state
         if (modal === imageModal) {
             currentZoom = 1;
             currentRotation = 0;
             translateX = 0;
             translateY = 0;
-            isDragging = false; 
-            modalImage.style.transform = ''; 
-            modalImage.style.cursor = 'zoom-in'; 
+            isDragging = false; // Ensure isDragging is false on close
+            modalImage.style.transform = ''; // Clear all transforms
+            modalImage.style.cursor = 'zoom-in'; // Reset cursor to default for non-zoomed state
+            // Also remove document listeners if they somehow remained active
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
         }
         document.body.classList.remove('modal-open');
 
+        // NEW: Re-focus the last focused category button after closing a modal
         if (focusedCategoryButton) {
-            setButtonFocus(focusedCategoryButton); 
+            setButtonFocus(focusedCategoryButton); // Use setButtonFocus to re-apply focus and scrollIntoView
         }
     }
 
+    // QR-Code-Modal anzeigen
     function showQrCodeModal(code) {
         if (typeof QRCode === 'undefined') {
             showCustomAlert('QR-Code-Generierungsbibliothek nicht gefunden.', 'Fehler');
@@ -3130,9 +3324,10 @@ const db = (() => {
         document.body.classList.add('modal-open');
     }
 
+    // NEU: Funktion zum Öffnen des Suchmodals
     async function openSearchModal() {
         searchAuftragInput.value = '';
-        searchAuftragInput.focus(); 
+        searchAuftragInput.focus(); // Focus the input field immediately
         searchResultsContainer.innerHTML = '';
         searchModal.style.display = 'flex';
         document.body.classList.add('modal-open');
@@ -3148,6 +3343,7 @@ const db = (() => {
         }
     }
 
+    // NEU: Funktion zum Durchführen der Suche
     function performSearch() {
         const auftragTerm = searchAuftragInput.value.trim().toLowerCase();
 
@@ -3161,6 +3357,7 @@ const db = (() => {
         renderSearchResults(uniqueTraverseNumbers);
     }
 
+    // NEU: Funktion zum Anzeigen der Suchergebnisse
     function renderSearchResults(traverseNumbers) {
         searchResultsContainer.innerHTML = '';
 
@@ -3186,6 +3383,7 @@ const db = (() => {
         });
     }
 
+    // NEW: Function to open Bock selection modal
     async function showBockSelectionModal() {
         bockButtonsContainer.innerHTML = '';
         for (let i = 1; i <= 8; i++) {
@@ -3204,44 +3402,48 @@ const db = (() => {
         setBockModalFocus(0);
     }
 
+    // NEW: Function to handle Bock number selection
     async function handleBockSelection(selectedBockNumber) {
         if (currentCategoryForBockSelection === null || typeof currentCategoryForBockSelection !== 'number' || isNaN(currentCategoryForBockSelection)) {
-            showCustomAlert('Fehler: Die zum Speichern der Hub- & Senkstation-Nummer erforderliche Kategorie konnte nicht identifiziert werden. Bitte wählen Sie zuerst eine Traversen-Schaltfläche aus oder versuchen Sie es erneut.', 'Fehler'); 
+            showCustomAlert('Fehler: Die zum Speichern der Hub- & Senkstation-Nummer erforderliche Kategorie konnte nicht identifiziert werden. Bitte wählen Sie zuerst eine Traversen-Schaltfläche aus oder versuchen Sie es erneut.', 'Fehler'); <!-- Changed to Hub- & Senkstation -->
             hideLoading();
             return;
         }
 
-        showLoading("Hub- & Senkstation-Nummer wird gespeichert..."); 
+        showLoading("Hub- & Senkstation-Nummer wird gespeichert..."); <!-- Changed to Hub- & Senkstation -->
         try {
             await db.saveCategoryMetadata({ categoryNumber: currentCategoryForBockSelection, bockNumber: selectedBockNumber });
-            await updateBockHeader(); 
+            await updateBockHeader(); // NEW: Update Bock header after selection
 
             closeModal(bockSelectionModal);
 
-            showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => { 
+            showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => { <!-- Changed to Auftrag eingeben -->
                 if (manualCode && manualCode.trim() !== '') {
                     addNewEntry(manualCode.trim(), null, 'manual');
                 }
             });
 
         } catch (error) {
-            console.error("Fehler beim Speichern der Hub- & Senkstation-Nummer oder bei der weiteren Verarbeitung:", error); 
-            showCustomAlert('Fehler beim Speichern der Hub- & Senkstation-Nummer oder während des Prozesses: ' + error.message, 'Fehler'); 
+            console.error("Fehler beim Speichern der Hub- & Senkstation-Nummer oder bei der weiteren Verarbeitung:", error); <!-- Changed to Hub- & Senkstation -->
+            showCustomAlert('Fehler beim Speichern der Hub- & Senkstation-Nummer oder während des Prozesses: ' + error.message, 'Fehler'); <!-- Changed to Hub- & Senkstation -->
         } finally {
             hideLoading();
         }
     }
 
+    // NEW: Handler for Bock modal cancel button
     bockCancelBtn.addEventListener('click', () => {
         closeModal(bockSelectionModal);
     });
 
 
+    // Haupt-Ereignis-Listener initialisieren
     manualEntryBtn.addEventListener('click', handleManualEntryTrigger);
     noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
 
+    // UPDATED: Image viewer button event listeners
     closeImageModalBtn.addEventListener('click', () => closeModal(imageModal));
-    deleteImageBtn.addEventListener('click', deleteCurrentImage); 
+    deleteImageBtn.addEventListener('click', deleteCurrentImage); // This still points to the delete logic
     rotateLeftBtn.addEventListener('click', rotateLeft);
     rotateRightBtn.addEventListener('click', rotateRight);
     zoomInBtn.addEventListener('click', zoomIn);
@@ -3251,11 +3453,17 @@ const db = (() => {
 
     imageUploadInput.addEventListener('change', handleFileSelected);
 
+    // Old image modal navigation buttons now handled by new structure and keyboard events
     document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
     document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
     document.getElementById('qrCodeCloseBtn').addEventListener('click', () => closeModal(qrCodeModal));
     
+    // Removed old modalImage click listener that toggled 'image-zoomed-in' class
+
+    // The imageModal click listener is now more robust to close on clicks outside the image/controls
     imageModal.addEventListener('click', (e) => {
+        // Check if the click target is the modal overlay itself OR the image-viewer-container
+        // and NOT the modalImage or any of the buttons within viewer-controls
         const isClickOnImageOrControl = modalImage.contains(e.target) || e.target.closest('.viewer-controls');
         if (!isClickOnImageOrControl && (e.target === imageModal || e.target.classList.contains('image-viewer-container'))) {
             closeModal(imageModal);
@@ -3283,6 +3491,7 @@ const db = (() => {
         }
     });
 
+    // NEW: Keyboard navigation for image modal
     imageModal.addEventListener('keydown', (e) => {
         if (imageModal.style.display === 'flex') {
             if (e.key === 'ArrowLeft') {
@@ -3294,37 +3503,40 @@ const db = (() => {
             } else if (e.key === 'Escape') {
                 e.preventDefault();
                 closeModal(imageModal);
-            } else if (e.key === '+' || e.key === '=') { 
+            } else if (e.key === '+' || e.key === '=') { // Zoom In
                 e.preventDefault();
                 zoomIn();
-            } else if (e.key === '-' || e.key === '_') { 
+            } else if (e.key === '-' || e.key === '_') { // Zoom Out
                 e.preventDefault();
                 zoomOut();
-            } else if (e.key === 'r' || e.key === 'R') { 
+            } else if (e.key === 'r' || e.key === 'R') { // Rotate Right
                 e.preventDefault();
                 rotateRight();
-            } else if (e.key === 'l' || e.key === 'L') { 
+            } else if (e.key === 'l' || e.key === 'L') { // Rotate Left
                 e.preventDefault();
                 rotateLeft();
-            } else if (e.key === 'f' || e.key === 'F') { 
+            } else if (e.key === 'f' || e.key === 'F') { // Fullscreen
                 e.preventDefault();
                 toggleFullscreen();
-            } else if (e.key === 'd' || e.key === 'D') { 
+            } else if (e.key === 'd' || e.key === 'D') { // Download
                 e.preventDefault();
                 downloadImage();
             }
         }
     });
 
+    // Kombinált billentyűzetkezelő a window-ra
     window.addEventListener('keydown', async (e) => {
+        // CHART BUTTON TOGGLE WITH CTRL + D
         if (e.ctrlKey && e.key === 'd') {
-            e.preventDefault(); 
+            e.preventDefault(); // Megakadályozza az alapértelmezett böngésző viselkedését (pl. könyvjelzőzés)
             if (chartButtonContainer) {
                 chartButtonContainer.style.display = chartButtonContainer.style.display === 'none' ? 'flex' : 'none';
             }
-            return; 
+            return; // Visszatérés a Ctrl+D kezelése után
         }
 
+        // 1. Modális ablakok bezárása Esc billentyűvel
         if (e.key === 'Escape') {
             if (imageModal.style.display === 'flex') {
                 closeModal(imageModal);
@@ -3351,6 +3563,7 @@ const db = (() => {
             }
         }
 
+        // Ellenőrizzük, hogy nyitva van-e valamilyen modális ablak, kivéve a customPromptInput-ot, ha abban gépelünk.
         const isAnyModalOpenAndNotPromptInputFocused = (
             imageModal.style.display === 'flex' ||
             noteModal.style.display === 'flex' ||
@@ -3361,6 +3574,7 @@ const db = (() => {
             (customPromptModal.style.display === 'flex' && document.activeElement !== customPromptInput)
         );
 
+        // Ha nyitva van egy modális ablak (és nem a prompt inputban gépelünk), ne dolgozzunk fel további billentyűket.
         if (isAnyModalOpenAndNotPromptInputFocused) {
             if (searchModal.style.display === 'flex' && e.key === 'Enter' && document.activeElement !== searchAuftragInput) {
                 e.preventDefault();
@@ -3372,28 +3586,34 @@ const db = (() => {
             return;
         }
 
+        // 2. Enter billentyű kezelése fókuszált kategóriagombon
         if (e.key === 'Enter' && focusedCategoryButton) {
             e.preventDefault();
             const focusedCategoryNum = parseInt(focusedCategoryButton.querySelector('.category-number-display').textContent);
+            // Ellenőrizzük, hogy a jelenlegi kategóriában vannak-e bejegyzések
             const currentEntries = await db.getEntriesForCategory(focusedCategoryNum);
             const hasData = currentEntries.length > 0;
 
             if (currentCategory === focusedCategoryNum) {
                 if (hasData) {
+                    // Második Enter egy adatot tartalmazó kategórián: Szkennelő prompt megnyitása
                     showCustomPrompt('Auftrag eingeben', 'Manuelle Eingabe').then(manualCode => {
                         if (manualCode && manualCode.trim() !== '') {
                             addNewEntry(manualCode.trim(), null, 'manual');
                         }
                     });
                 } else {
+                    // Második Enter egy üres kategórián: Bock kiválasztás megnyitása
                     showBockSelectionModal();
                 }
             } else {
+                // Első Enter, vagy új kategória kiválasztása: Csak kiválasztás
                 await selectCategory(focusedCategoryNum, focusedCategoryButton);
             }
             return;
         }
 
+        // 3. Nyilak navigálása a kategóriagombok között
         if (e.key.startsWith('Arrow')) {
             e.preventDefault();
             const allCategoryButtons = Array.from(document.querySelectorAll('.grid button'));
@@ -3455,6 +3675,7 @@ const db = (() => {
         }
     });
 
+    // Ereignis-Handler für den Kategorie törlése-Button
     clearCategoryBtn.addEventListener('click', async () => {
         const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
         const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
@@ -3476,8 +3697,8 @@ const db = (() => {
                 renderTable();
                 await updateCategoryButtonColors();
                 updateTraverseHeader();
-                await updateBockHeader(); 
-                updateTableHeaderColors(); 
+                await updateBockHeader(); // NEW: Update Bock header after clearing category
+                updateTableHeaderColors(); // NEW: Update table header colors
 
                 const count = await db.getEntryCountForCategory(currentCategory);
                 if (count === 0) {
@@ -3496,20 +3717,25 @@ const db = (() => {
         }
     });
 
+    // NEU: Ereignis-Handler für den Suchbutton
     searchBtn.addEventListener('click', openSearchModal);
 
+    // NEU: Keydown-Handler für die Such-Inputs im Suchmodal
     searchAuftragInput.addEventListener('input', () => {
         performSearch();
     });
 
+    // NEU: Chart button event listener (dummy function for now)
     chartBtn.addEventListener('click', openChartModal);
 
 
+    // Warnung vor dem Verlassen der Seite (wegen IndexedDB)
     window.addEventListener('beforeunload', function (e) {
         e.preventDefault();
         e.returnValue = '';
     });
 
+    // NEW: Function to open chart modal and populate data
     async function openChartModal() {
         if (currentCategory === null) {
             showCustomAlert('Bitte wählen Sie eine Kategorie aus, um das Diagramm anzuzeigen!', 'Kategorie fehlt');
@@ -3520,7 +3746,7 @@ const db = (() => {
         try {
             const currentEntriesForChart = await db.getEntriesForCategory(currentCategory);
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0); // Reset time for date comparison
 
             let sunNonFaNaCount = 0;
             let sunFaNaCount = 0;
@@ -3532,13 +3758,13 @@ const db = (() => {
                 const entryHour = entryDate.getHours();
                 const isFaNa = entry.code && (entry.code.startsWith('FA') || entry.code.startsWith('NA'));
 
-                if (entryHour < 14) { 
+                if (entryHour < 14) { // Day shift
                     if (isFaNa) {
                         sunFaNaCount++;
                     } else {
                         sunNonFaNaCount++;
                     }
-                } else { 
+                } else { // Night shift
                     if (isFaNa) {
                         moonFaNaCount++;
                     } else {
@@ -3547,7 +3773,7 @@ const db = (() => {
                 }
             });
 
-            document.getElementById('chartDateCell').textContent = today.toLocaleDateString('de-DE'); 
+            document.getElementById('chartDateCell').textContent = today.toLocaleDateString('de-DE'); // Changed to de-DE
             document.getElementById('chartSunNonFaNa').textContent = sunNonFaNaCount;
             document.getElementById('chartSunFaNa').textContent = sunFaNaCount;
             document.getElementById('chartMoonNonFaNa').textContent = moonNonFaNaCount;
@@ -3572,6 +3798,7 @@ const db = (() => {
         }
     });
 
+    // Aktualisiert die Farben der Kategorie-Buttons beim Laden der Seite
     window.onload = async function() {
         await updateCategoryButtonColors();
         const firstCategoryButton = document.querySelector('#categoryGrid1 button:first-child');
@@ -3579,11 +3806,9 @@ const db = (() => {
             await selectCategory(parseInt(firstCategoryButton.querySelector('.category-number-display').textContent), firstCategoryButton);
         }
         await updateGlobalHeaderIcons();
-        await updateBockHeader(); 
-        updateTableHeaderColors(); 
+        await updateBockHeader(); // NEW: Update Bock header on initial load
+        updateTableHeaderColors(); // NEW: Update table header colors on initial load
     };
 
 })();
 </script>
-</body>
-</html>
